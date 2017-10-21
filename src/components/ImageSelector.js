@@ -9,7 +9,8 @@ const StyledDropzone = g(Dropzone)({
   background: "gray"
 });
 
-const DropzoneContainer = g.div({
+const StyledSection = g.section({
+  height: "100%",
   display: "flex",
   justifyContent: "center",
   alignItems: "center"
@@ -26,8 +27,8 @@ class ImageSelector extends Component {
 
   render() {
     return (
-      <section>
-        <DropzoneContainer className="dropzone">
+      <StyledSection>
+        <div className="dropzone">
           <StyledDropzone
             accept="image/jpeg, image/png"
             multiple={false}
@@ -35,14 +36,13 @@ class ImageSelector extends Component {
               this.setState({ accepted, rejected });
             }}
           >
-            {this.state.accepted.map(f => (
-              <span>
-                {f.name} - {f.size} bytes
-              </span>
-            ))}
+            {this.state.accepted.map((f, i) => {
+              console.log(f);
+              return null;
+            })}
           </StyledDropzone>
-        </DropzoneContainer>
-      </section>
+        </div>
+      </StyledSection>
     );
   }
 }

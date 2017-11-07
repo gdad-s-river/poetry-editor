@@ -1,9 +1,8 @@
 import React from "react";
-import { render } from "react-dom";
 import Draft from "draft-js";
 import { stateToHTML } from "draft-js-export-html";
 import { ChromePicker } from "react-color";
-import debounce from 'lodash.debounce';
+import debounce from "lodash.debounce";
 
 // import importedStyles from "./importedStyles.js";
 import "./reset.css";
@@ -25,7 +24,10 @@ const styles = {
   colorpickerWrapper: {
     position: "relative",
     top: "200px",
-    left: "30%",
+    left: "50%"
+  },
+  canvas: {
+    border: "3px solid black"
   }
 };
 
@@ -37,7 +39,8 @@ class MyEditor extends React.Component {
       canvasBg: "#fff"
     };
 
-    this.handleColorChange = debounce(this.handleColorChange, 150);
+    this.handleColorChange = debounce(this.handleColorChange.bind(this), 150);
+    this.handleColorCompleteChange = this.handleColorCompleteChange.bind(this);
     this.onChange = editorState =>
       this.setState({
         editorState
@@ -58,7 +61,7 @@ class MyEditor extends React.Component {
     return dpr / bsr;
   }
 
-  createHiDPICanvas = function (w, h, bgColor, ratio) {
+  createHiDPICanvas = function(w, h, ratio) {
     if (!ratio) {
       ratio = this.getPixelRatio();
     }
@@ -69,8 +72,6 @@ class MyEditor extends React.Component {
     c.style.height = h + "px";
     c.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
     c.ctx = c.getContext("2d");
-    c.ctx.fillStyle = bgColor;
-    c.ctx.fillRect(0, 0, c.width, c.height);
     return c;
   };
 
@@ -96,7 +97,7 @@ class MyEditor extends React.Component {
 
           body {
             margin: 0;
-            padding: 20px;
+            padding: 100px;
           }
         </style>
         <foreignObject width="100%" height="100%">
@@ -110,14 +111,23 @@ class MyEditor extends React.Component {
 
   componentDidUpdate() {
     console.log("I Updated!");
-    this.againNagain();
+    // remove previous image
+    this.myCanvas.ctx.clearRect(
+      0,
+      0,
+      this.myCanvas.width,
+      this.myCanvas.height
+    );
+    this.drawUpdatedImage();
   }
 
-  againNagain() {
-    var myCanvas = this.createHiDPICanvas(500, 500, this.state.canvasBg);
+  drawUpdatedImage() {
+    var myCanvas = this.createHiDPICanvas(500, 500);
+    this.myCanvas = myCanvas;
+    this.myCanvas.ctx.fillStyle = this.state.canvasBg;
+    this.myCanvas.ctx.fillRect(0, 0, this.myCanvas.width, this.myCanvas.height);
+
     var data = this.getImprintData(this.createMarkup().__html);
-    // let data = this.getImprintData();
-    // console.log(data);
 
     var DOMURL = window.URL || window.webkitURL || window;
 
@@ -128,7 +138,7 @@ class MyEditor extends React.Component {
     // myCanvas.ctx.font = "40px sans-serif";
     // myCanvas.ctx.fillText('Hello world', 10, 100);
 
-    img.onload = function () {
+    img.onload = function() {
       myCanvas.ctx.drawImage(img, 0, 0);
 
       DOMURL.revokeObjectURL(url);
@@ -138,7 +148,7 @@ class MyEditor extends React.Component {
   }
 
   componentDidMount() {
-    this.againNagain();
+    this.drawUpdatedImage();
   }
 
   _handleKeyCommand(command, editorState) {
@@ -157,16 +167,32 @@ class MyEditor extends React.Component {
     return { __html: html };
   }
 
-  handleChangeComplete(color) {
-    // console.log(color.hex);
-    this.setState({ canvasBg: color.hex })
+  handleColorCompleteChange(color) {
+    // console.log(color.hex, this);
+    this.setState(prevState => {
+      return { canvasBg: color.hex };
+    });
+
+    // this.setCanvasBg(color);
+  }
+
+  setCanvasBg(color) {
+    this.myCanvas.ctx.fillStyle = color.hex;
+    this.myCanvas.ctx.fillRect(0, 0, this.myCanvas.width, this.myCanvas.height);
   }
 
   handleColorChange(color) {
-    this.setState({ canvasBg: color.hex })
+    this.setState(prevState => {
+      return { canvasBg: color.hex };
+    });
+    this.setCanvasBg(color);
   }
 
   render() {
+    const canvasStyles = {
+      ...styles.canvas
+    };
+
     return [
       <div key="1" style={styles.editor}>
         <Editor
@@ -179,18 +205,22 @@ class MyEditor extends React.Component {
         <div style={styles.html}>
           <div className="html" dangerouslySetInnerHTML={this.createMarkup()} />
           <div>{this.createMarkup().__html}</div>
-          <canvas id="canvas" ref="canvas" />
+          <canvas id="canvas" ref="canvas" style={canvasStyles} />
         </div>
       </div>,
-      <div key="2" className="colorpicker-wrapper" style={styles.colorpickerWrapper}>
+      <div
+        key="2"
+        className="colorpicker-wrapper"
+        style={styles.colorpickerWrapper}
+      >
         <ChromePicker
-          onChangeComplete={this.handleChangeComplete}
+          onChangeComplete={this.handleColorCompleteChange}
           onChange={this.handleColorChange}
-          color={this.state.canvasBg} />
+          color={this.state.canvasBg}
+        />
       </div>
     ];
   }
 }
-
 
 export default MyEditor;

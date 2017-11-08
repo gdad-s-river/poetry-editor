@@ -36,7 +36,12 @@ class MyEditor extends React.Component {
     super(props);
     this.state = {
       editorState: EditorState.createEmpty(),
-      canvasBg: "#fff"
+      canvasBg: "#fff",
+      isDragging: false,
+      imgPos: {
+        x: 0,
+        y: 0
+      }
     };
 
     this.handleColorChange = debounce(this.handleColorChange.bind(this), 150);
@@ -45,7 +50,12 @@ class MyEditor extends React.Component {
       this.setState({
         editorState
       });
+
     this.handleKeyCommand = this._handleKeyCommand.bind(this);
+    this.handleCanvasMouseDown = this.handleCanvasMouseDown.bind(this);
+    this.handleCanvasMouseMove = this.handleCanvasMouseMove.bind(this);
+    this.handleCanvasMouseUp = this.handleCanvasMouseUp.bind(this);
+    this.handleCanvasMouseOut = this.handleCanvasMouseOut.bind(this);
   }
 
   getPixelRatio() {
@@ -122,24 +132,26 @@ class MyEditor extends React.Component {
   }
 
   drawUpdatedImage() {
-    var myCanvas = this.createHiDPICanvas(500, 500);
+    let myCanvas = this.createHiDPICanvas(500, 500);
     this.myCanvas = myCanvas;
     this.myCanvas.ctx.fillStyle = this.state.canvasBg;
     this.myCanvas.ctx.fillRect(0, 0, this.myCanvas.width, this.myCanvas.height);
 
-    var data = this.getImprintData(this.createMarkup().__html);
+    let data = this.getImprintData(this.createMarkup().__html);
 
-    var DOMURL = window.URL || window.webkitURL || window;
+    let DOMURL = window.URL || window.webkitURL || window;
 
-    var img = new Image(500, 500);
-    var svg = new Blob([data], { type: "image/svg+xml" });
-    var url = DOMURL.createObjectURL(svg);
+    let img = new Image(500, 500);
+    this.img = img;
+    let svg = new Blob([data], { type: "image/svg+xml" });
+    let url = DOMURL.createObjectURL(svg);
+    let { x, y } = this.state.imgPos;
 
     // myCanvas.ctx.font = "40px sans-serif";
     // myCanvas.ctx.fillText('Hello world', 10, 100);
 
     img.onload = function() {
-      myCanvas.ctx.drawImage(img, 0, 0);
+      myCanvas.ctx.drawImage(img, x, y);
 
       DOMURL.revokeObjectURL(url);
     };
@@ -188,6 +200,51 @@ class MyEditor extends React.Component {
     this.setCanvasBg(color);
   }
 
+  handleCanvasMouseDown(e) {
+    // let cDimensions = this.myCanvas.getBoundingClientRect();
+    // let offsetX = cDimensions.left + document.body.scrollLeft;
+    // let offsetY = cDimensions.top + document.body.scrollTop;
+
+    this.setState({ isDragging: true });
+    this.setCanvasMouseState(e);
+
+    // these are the mouse coordinates with respect to top left canvas corner
+    // console.log(e.clientX - offsetX, ", ", e.clientY - offsetY);
+  }
+
+  handleCanvasMouseUp(e) {
+    this.setState({ isDragging: false });
+    this.setCanvasMouseState(e);
+  }
+
+  setCanvasMouseState(e) {
+    let cDimensions = this.myCanvas.getBoundingClientRect();
+    let offsetX = cDimensions.left + document.body.scrollLeft;
+    let offsetY = cDimensions.top + document.body.scrollTop;
+
+    this.setState({
+      imgPos: {
+        x: e.clientX - offsetX,
+        y: e.clientY - offsetY
+      }
+    });
+  }
+
+  handleCanvasMouseMove(e) {
+    if (this.state.isDragging) {
+      // let { cWidth, cHeight, ctx } = this.myCanvas;
+
+      this.setCanvasMouseState(e);
+
+      // ctx.clearRect(0, 0, cWidth, cHeight);
+      // ctx.drawImage(this.img, e.clientX - offsetX, e.clientY - offsetY);
+    }
+  }
+
+  handleCanvasMouseOut() {
+    this.setState({ isDragging: false });
+  }
+
   render() {
     const canvasStyles = {
       ...styles.canvas
@@ -205,7 +262,15 @@ class MyEditor extends React.Component {
         <div style={styles.html}>
           <div className="html" dangerouslySetInnerHTML={this.createMarkup()} />
           <div>{this.createMarkup().__html}</div>
-          <canvas id="canvas" ref="canvas" style={canvasStyles} />
+          <canvas
+            id="canvas"
+            ref="canvas"
+            style={canvasStyles}
+            onMouseDown={this.handleCanvasMouseDown}
+            onMouseUp={this.handleCanvasMouseUp}
+            onMouseMove={this.handleCanvasMouseMove}
+            onMouseOut={this.handleCanvasMouseOut}
+          />
         </div>
       </div>,
       <div

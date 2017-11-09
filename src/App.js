@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import Draft from "draft-js";
 import { stateToHTML } from "draft-js-export-html";
 import { ChromePicker } from "react-color";
@@ -27,7 +28,8 @@ const styles = {
     left: "50%"
   },
   canvas: {
-    border: "3px solid black"
+    border: "3px solid black",
+    cursor: "pointer"
   }
 };
 
@@ -37,12 +39,15 @@ class MyEditor extends React.Component {
     this.state = {
       editorState: EditorState.createEmpty(),
       canvasBg: "#fff",
-      isDragging: false,
-      imgPos: {
-        x: 0,
-        y: 0
-      }
+      isDragging: false
+      // imgPos: {
+      //   x: 0,
+      //   y: 0
+      // }
     };
+
+    this.imgX = 0;
+    this.imgY = 0;
 
     this.handleColorChange = debounce(this.handleColorChange.bind(this), 150);
     this.handleColorCompleteChange = this.handleColorCompleteChange.bind(this);
@@ -120,7 +125,7 @@ class MyEditor extends React.Component {
   }
 
   componentDidUpdate() {
-    console.log("I Updated!");
+    console.log("cDU fired!");
     // remove previous image
     this.myCanvas.ctx.clearRect(
       0,
@@ -128,16 +133,34 @@ class MyEditor extends React.Component {
       this.myCanvas.width,
       this.myCanvas.height
     );
+
     this.drawUpdatedImage();
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    // if (nextState.isDragging === true) {
+    //   console.log("shouldn't update");
+    //   return false;
+    // }
+    console.log(
+      "sCU: prev, next state ",
+      this.state.isDragging,
+      nextState.isDragging
+    );
+
+    return true;
+  }
+
   drawUpdatedImage() {
+    console.log("drawing updated");
     let myCanvas = this.createHiDPICanvas(500, 500);
+    // let load = false;
     this.myCanvas = myCanvas;
     this.myCanvas.ctx.fillStyle = this.state.canvasBg;
     this.myCanvas.ctx.fillRect(0, 0, this.myCanvas.width, this.myCanvas.height);
 
-    let data = this.getImprintData(this.createMarkup().__html);
+    let draftMarkup = this.createMarkup().__html;
+    let data = this.getImprintData(draftMarkup);
 
     let DOMURL = window.URL || window.webkitURL || window;
 
@@ -145,18 +168,39 @@ class MyEditor extends React.Component {
     this.img = img;
     let svg = new Blob([data], { type: "image/svg+xml" });
     let url = DOMURL.createObjectURL(svg);
-    let { x, y } = this.state.imgPos;
+    // let { x, y } = this.state.imgPos;
+
+    // console.log(this.htmled.querySelectorAll("p"));
+
+    // Array.from(this.htmled.querySelectorAll("p")).forEach(el => {
+    //   console.log(el.clientWidth);
+    // });
+    // console.log(dumEl.getBoundingClientRect());
 
     // myCanvas.ctx.font = "40px sans-serif";
     // myCanvas.ctx.fillText('Hello world', 10, 100);
 
     img.onload = function() {
-      myCanvas.ctx.drawImage(img, x, y);
+      // load = true;
+      /*
+        followed this: https://stackoverflow.com/questions/11506619/image-flickers-during-drag-in-canvas
+        but didn't get what I wanted, keeping it here as is for now.
 
-      DOMURL.revokeObjectURL(url);
+        firefox goes bonkerse with trailing parts of previous images as tails,
+        need to do something about it.
+      */
+      draw();
     };
 
+    let that = this;
+    function draw() {
+      myCanvas.ctx.drawImage(img, that.imgX, that.imgY);
+      DOMURL.revokeObjectURL(url);
+    }
+
     img.src = url;
+
+    // window.requestAnimationFrame(this.drawUpdatedImage.bind(this));
   }
 
   componentDidMount() {
@@ -201,12 +245,15 @@ class MyEditor extends React.Component {
   }
 
   handleCanvasMouseDown(e) {
+    console.log("mouse down happened");
     // let cDimensions = this.myCanvas.getBoundingClientRect();
     // let offsetX = cDimensions.left + document.body.scrollLeft;
     // let offsetY = cDimensions.top + document.body.scrollTop;
 
-    this.setState({ isDragging: true });
-    this.setCanvasMouseState(e);
+    this.setState({ isDragging: true }, () => {
+      console.log("in mousedown after isDragging set to true");
+    });
+    // this.setCanvasMouseState(e);
 
     // these are the mouse coordinates with respect to top left canvas corner
     // console.log(e.clientX - offsetX, ", ", e.clientY - offsetY);
@@ -214,7 +261,7 @@ class MyEditor extends React.Component {
 
   handleCanvasMouseUp(e) {
     this.setState({ isDragging: false });
-    this.setCanvasMouseState(e);
+    // this.setCanvasMouseState(e);
   }
 
   setCanvasMouseState(e) {
@@ -222,12 +269,23 @@ class MyEditor extends React.Component {
     let offsetX = cDimensions.left + document.body.scrollLeft;
     let offsetY = cDimensions.top + document.body.scrollTop;
 
-    this.setState({
-      imgPos: {
-        x: e.clientX - offsetX,
-        y: e.clientY - offsetY
-      }
-    });
+    this.imgX = e.clientX - offsetX;
+    this.imgY = e.clientY - offsetY;
+
+    // console.log(this.imgX, this.imgY);
+
+    // this.setState({
+    //   imgPos: {
+    //     x: e.clientX - offsetX,
+    //     y: e.clientY - offsetY
+    //   }
+    // });
+  }
+
+  redrawImg() {
+    this.myCanvas.ctx.fillRect(0, 0, this.myCanvas.width, this.myCanvas.height);
+    this.myCanvas.ctx.drawImage(this.img, this.imgX, this.imgY);
+    requestAnimationFrame(this.redrawImg.bind(this));
   }
 
   handleCanvasMouseMove(e) {
@@ -235,6 +293,7 @@ class MyEditor extends React.Component {
       // let { cWidth, cHeight, ctx } = this.myCanvas;
 
       this.setCanvasMouseState(e);
+      this.redrawImg();
 
       // ctx.clearRect(0, 0, cWidth, cHeight);
       // ctx.drawImage(this.img, e.clientX - offsetX, e.clientY - offsetY);
@@ -260,7 +319,11 @@ class MyEditor extends React.Component {
           placeholder={`Writecha Poem Here!`}
         />
         <div style={styles.html}>
-          <div className="html" dangerouslySetInnerHTML={this.createMarkup()} />
+          <div
+            className="html"
+            ref={htmled => (this.htmled = htmled)}
+            dangerouslySetInnerHTML={this.createMarkup()}
+          />
           <div>{this.createMarkup().__html}</div>
           <canvas
             id="canvas"

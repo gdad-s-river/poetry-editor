@@ -1,13 +1,20 @@
 import React from "react";
-import ReactDOM from "react-dom";
+// import ReactDOM from "react-dom";
 import Draft from "draft-js";
 import { stateToHTML } from "draft-js-export-html";
 import { ChromePicker } from "react-color";
-import debounce from "lodash.debounce";
+import FontColorPicker, {
+  colorPickerPlugin
+} from "./components/ColorPickerPlugin";
+// import debounce from "lodash.debounce";
 
 // import importedStyles from "./importedStyles.js";
 import "./reset.css";
 import "draft-js/dist/Draft.css";
+
+// function log(name, val) {
+//   console.log(`${name}: `, val);
+// }
 
 const { Editor, EditorState, getDefaultKeyBinding, RichUtils } = Draft;
 
@@ -29,7 +36,8 @@ const styles = {
   },
   canvas: {
     border: "3px solid black",
-    cursor: "pointer"
+    cursor: "pointer",
+    marginLeft: "40px"
   }
 };
 
@@ -39,28 +47,37 @@ class MyEditor extends React.Component {
     this.state = {
       editorState: EditorState.createEmpty(),
       canvasBg: "#fff",
-      isDragging: false
-      // imgPos: {
-      //   x: 0,
-      //   y: 0
-      // }
+      isDragging: false,
+      styleMap: {}
     };
+
+    this.focus = () => this.editor.focus();
 
     this.imgX = 0;
     this.imgY = 0;
 
-    this.handleColorChange = debounce(this.handleColorChange.bind(this), 150);
+    this.handleColorChange = this.handleColorChange.bind(this);
     this.handleColorCompleteChange = this.handleColorCompleteChange.bind(this);
     this.onChange = editorState =>
       this.setState({
         editorState
       });
 
+    this.getEditorState = () => this.state.editorState;
+    this.picker = colorPickerPlugin(this.onChange, this.getEditorState);
+
     this.handleKeyCommand = this._handleKeyCommand.bind(this);
     this.handleCanvasMouseDown = this.handleCanvasMouseDown.bind(this);
     this.handleCanvasMouseMove = this.handleCanvasMouseMove.bind(this);
     this.handleCanvasMouseUp = this.handleCanvasMouseUp.bind(this);
     this.handleCanvasMouseOut = this.handleCanvasMouseOut.bind(this);
+
+    this.toggleColor = toggledColor => this._toggleColor(toggledColor);
+
+    // this.handleFontColorCompleteChange = this.handleFontColorCompleteChange.bind(
+    //   this
+    // );
+    // this.handleFontColorChange = this.handleFontColorChange.bind(this);
   }
 
   getPixelRatio() {
@@ -112,7 +129,7 @@ class MyEditor extends React.Component {
 
           body {
             margin: 0;
-            padding: 100px;
+            padding: 200px;
           }
         </style>
         <foreignObject width="100%" height="100%">
@@ -125,7 +142,7 @@ class MyEditor extends React.Component {
   }
 
   componentDidUpdate() {
-    console.log("cDU fired!");
+    // console.log("cDU fired!");
     // remove previous image
     this.myCanvas.ctx.clearRect(
       0,
@@ -137,22 +154,22 @@ class MyEditor extends React.Component {
     this.drawUpdatedImage();
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    // if (nextState.isDragging === true) {
-    //   console.log("shouldn't update");
-    //   return false;
-    // }
-    console.log(
-      "sCU: prev, next state ",
-      this.state.isDragging,
-      nextState.isDragging
-    );
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   // if (nextState.isDragging === true) {
+  //   //   console.log("shouldn't update");
+  //   //   return false;
+  //   // }
+  //   // console.log(
+  //   //   "sCU: prev, next state ",
+  //   //   this.state.isDragging,
+  //   //   nextState.isDragging
+  //   // );
 
-    return true;
-  }
+  //   return true;
+  // }
 
   drawUpdatedImage() {
-    console.log("drawing updated");
+    // console.log("drawing updated");
     let myCanvas = this.createHiDPICanvas(500, 500);
     // let load = false;
     this.myCanvas = myCanvas;
@@ -218,18 +235,20 @@ class MyEditor extends React.Component {
   }
 
   createMarkup() {
-    let contentState = this.state.editorState.getCurrentContent();
-    let html = stateToHTML(contentState);
+    const { editorState } = this.state;
+    let contentState = editorState.getCurrentContent();
+    const inlineStyles = this.picker.exporter(editorState);
+    let html = stateToHTML(contentState, { inlineStyles });
     return { __html: html };
   }
 
   handleColorCompleteChange(color) {
-    // console.log(color.hex, this);
+    // console.log( , this);
     this.setState(prevState => {
       return { canvasBg: color.hex };
     });
 
-    // this.setCanvasBg(color);
+    this.setCanvasBg(color);
   }
 
   setCanvasBg(color) {
@@ -245,13 +264,13 @@ class MyEditor extends React.Component {
   }
 
   handleCanvasMouseDown(e) {
-    console.log("mouse down happened");
+    // console.log("mouse down happened");
     // let cDimensions = this.myCanvas.getBoundingClientRect();
     // let offsetX = cDimensions.left + document.body.scrollLeft;
     // let offsetY = cDimensions.top + document.body.scrollTop;
 
     this.setState({ isDragging: true }, () => {
-      console.log("in mousedown after isDragging set to true");
+      // console.log("in mousedown after isDragging set to true");
     });
     // this.setCanvasMouseState(e);
 
@@ -289,7 +308,10 @@ class MyEditor extends React.Component {
   }
 
   handleCanvasMouseMove(e) {
-    if (this.state.isDragging) {
+    if (
+      this.state.isDragging &&
+      this.state.editorState.getCurrentContent().hasText()
+    ) {
       // let { cWidth, cHeight, ctx } = this.myCanvas;
 
       this.setCanvasMouseState(e);
@@ -309,22 +331,33 @@ class MyEditor extends React.Component {
       ...styles.canvas
     };
 
+    const { editorState } = this.state;
+
     return [
-      <div key="1" style={styles.editor}>
-        <Editor
-          editorState={this.state.editorState}
-          onChange={this.onChange}
-          keyBindingFn={getDefaultKeyBinding}
-          handleKeyCommand={this.handleKeyCommand}
-          placeholder={`Writecha Poem Here!`}
-        />
+      <div key="1">
+        <div
+          style={styles.editor}
+          className="editor-wrapper"
+          onClick={this.focus}
+        >
+          <Editor
+            editorState={this.state.editorState}
+            onChange={this.onChange}
+            keyBindingFn={getDefaultKeyBinding}
+            handleKeyCommand={this.handleKeyCommand}
+            placeholder={`Writecha Poem Here!`}
+            ref={ref => (this.editor = ref)}
+            customStyleFn={this.picker.customStyleFn}
+          />
+        </div>
         <div style={styles.html}>
           <div
             className="html"
             ref={htmled => (this.htmled = htmled)}
             dangerouslySetInnerHTML={this.createMarkup()}
+            style={{ display: "none" }}
           />
-          <div>{this.createMarkup().__html}</div>
+          <div style={{ display: "none" }}>{this.createMarkup().__html}</div>
           <canvas
             id="canvas"
             ref="canvas"
@@ -341,14 +374,54 @@ class MyEditor extends React.Component {
         className="colorpicker-wrapper"
         style={styles.colorpickerWrapper}
       >
-        <ChromePicker
-          onChangeComplete={this.handleColorCompleteChange}
-          onChange={this.handleColorChange}
-          color={this.state.canvasBg}
-        />
+        <div
+          className="color-pickers"
+          style={{
+            display: "flex",
+            width: "37%",
+            justifyContent: "space-around"
+          }}
+        >
+          <ChromePicker
+            onChangeComplete={this.handleColorCompleteChange}
+            onChange={this.handleColorChange}
+            color={this.state.canvasBg}
+            disableAlpha={true}
+          />
+
+          <FontColorPicker
+            color={this.picker.currentColor(editorState)}
+            toggleColor={color => this.picker.addColor(color)}
+          />
+          {/* 
+          <ChromePicker
+            disableAlpha={true}
+            style={{ padding: "10px" }}
+            onChangeComplete={this.handleFontColorCompleteChange}
+            onChange={this.handleFontColorChange}
+          /> */}
+        </div>
       </div>
     ];
   }
+
+  // handleFontColorCompleteChange(color) {
+  //   // this.setState({
+  //   //   currentColor: {
+  //   //     color: `${color.hex}`
+  //   //   }
+  //   // });
+  //   this.toggleColor(color.hex);
+  // }
+
+  // handleFontColorChange(color) {
+  //   // this.setState({
+  //   //   currentColor: {
+  //   //     color: `${color.hex}`
+  //   //   }
+  //   // });
+  //   this.toggleColor(color.hex);
+  // }
 }
 
 export default MyEditor;

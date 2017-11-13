@@ -1,3 +1,8 @@
+<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/jkyjXjTsfTfa8V6wYfHTxevQ/gdad-s-river/poetry-editor'>
+  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/jkyjXjTsfTfa8V6wYfHTxevQ/gdad-s-river/poetry-editor.svg' />
+</a>
+
+
 ## Problem Being Solved
 
 Poetry Editor is a desktop browser editor for writers, especially for instagram poets, who put poems on images and then post their work. If you want more functionalities thank what Mirakee, Yourquote and other otherwise awesome platforms give you, and if you are tired of false autocomplete suggestions, false positives on swipe keyboard or your thumbs go numb while typing on a mobile phone. This editor is for you 💛💛💛
@@ -25,8 +30,3 @@ Ejected (too soon, wasn't really needed) Create React App, app. The code is most
 5. Save image functionality, sharing on popular social media functionality
 6. Instagram stories like range selector for seamlessly changing font size for selected text (like magic)
 7. Different beautiful google fonts dropdown menu options.
-
-<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/jkyjXjTsfTfa8V6wYfHTxevQ/gdad-s-river/poetry-editor'>
-  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/jkyjXjTsfTfa8V6wYfHTxevQ/gdad-s-river/poetry-editor.svg' />
-</a>
-

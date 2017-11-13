@@ -23,7 +23,9 @@ const styles = {
     border: "1px solid #ccc",
     cursor: "text",
     minHeight: 80,
-    padding: 10
+    padding: 10,
+    maxHeight: "10vh",
+    overflowY: "scroll"
   },
   html: {
     position: "fixed",
@@ -130,6 +132,14 @@ class MyEditor extends React.Component {
           body {
             margin: 0;
             padding: 200px;
+            /* this improved the font rendering a little (not much visible change on small font sizes, 
+              had to see at 500% zoom to see the difference)
+              The above was checked with two separate backgrounds : white and some color
+              the improvment might have been disguise. So I have to check the above on same background
+              before I can claim anything
+            */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
           }
         </style>
         <foreignObject width="100%" height="100%">

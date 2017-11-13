@@ -13,5 +13,12 @@ Utils for TODOS:
 
 
 ## TODOs: 
+[x]: Improve font rendering on canvas
+[x]: maintain the newlines on canvas when the text is copy pasted
+
+## Explore: 
+
+- gradient text: https://css-tricks.com/snippets/css/gradient-text/
+- dragging and dropping isn't smooth, explore why
 
 

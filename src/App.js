@@ -6,6 +6,9 @@ import { ChromePicker } from "react-color";
 import FontColorPicker, {
   colorPickerPlugin
 } from "./components/ColorPickerPlugin";
+
+import FontSizeChanger from "./components/FontSizeChanger";
+
 // import debounce from "lodash.debounce";
 
 // import importedStyles from "./importedStyles.js";
@@ -25,7 +28,8 @@ const styles = {
     minHeight: 80,
     padding: 10,
     maxHeight: "10vh",
-    overflowY: "scroll"
+    overflow: "scroll",
+    maxWidth: "80vw"
   },
   html: {
     position: "fixed",
@@ -33,8 +37,9 @@ const styles = {
   },
   colorpickerWrapper: {
     position: "relative",
-    top: "200px",
-    left: "50%"
+    top: "50px",
+    width: "50vw",
+    left: "60%"
   },
   canvas: {
     border: "3px solid black",
@@ -152,18 +157,21 @@ class MyEditor extends React.Component {
   }
 
   componentDidUpdate() {
-    // console.log("cDU fired!");
+    console.log("cDU fired!");
     // remove previous image
+    this.resetCanvas();
+
+    this.drawUpdatedImage();
+  }
+
+  resetCanvas = () => {
     this.myCanvas.ctx.clearRect(
       0,
       0,
       this.myCanvas.width,
       this.myCanvas.height
     );
-
-    this.drawUpdatedImage();
-  }
-
+  };
   // shouldComponentUpdate(nextProps, nextState) {
   //   // if (nextState.isDragging === true) {
   //   //   console.log("shouldn't update");
@@ -217,11 +225,22 @@ class MyEditor extends React.Component {
         need to do something about it.
       */
       draw();
+      console.log("have drawn");
     };
 
     let that = this;
     function draw() {
-      myCanvas.ctx.drawImage(img, that.imgX, that.imgY);
+      // myCanvas.ctx.drawImage(img, that.imgX, that.imgY);
+      /*
+        using this instead of the above, because the difference is visible 
+        when we use range input selector to switch font size very fast (
+          it ends in multiple font-ed text on the canvas which looks weird.
+          This happens because of unscheduled repaints (in dev tools performance timeline
+          the green "bar" before the image renders on canvas is always "composite layers")
+           (I think?) because of which requestAnimationFrame was made at the first place
+        )
+      */
+      that.redrawImg();
       DOMURL.revokeObjectURL(url);
     }
 
@@ -384,12 +403,18 @@ class MyEditor extends React.Component {
         className="colorpicker-wrapper"
         style={styles.colorpickerWrapper}
       >
+        <FontSizeChanger
+          font={this.picker.currentFontSize(editorState)}
+          addFontSize={fontSize => this.picker.addFontSize(fontSize)}
+          resetCanvas={this.resetCanvas}
+        />
         <div
           className="color-pickers"
           style={{
             display: "flex",
             width: "37%",
-            justifyContent: "space-around"
+            justifyContent: "space-around",
+            flexDirection: "column"
           }}
         >
           <ChromePicker

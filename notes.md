@@ -20,5 +20,10 @@ Utils for TODOS:
 
 - gradient text: https://css-tricks.com/snippets/css/gradient-text/
 - dragging and dropping isn't smooth, explore why
+- See the peformance section ( OffscreenCanvas ) api (canvas in a web worker)
 
+## Cool things I could do after
+- This one is so cool, I how could I not think that, despite the face that I was doing the canvas foreignobject dom mapping!
+
+- It's surprising that I didn't stumble upon surma's blog: http://dassur.ma/things/dom2texture/, while searching for howto DOM ➡️ Canvas mapping.
 

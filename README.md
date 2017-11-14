@@ -28,5 +28,10 @@ Ejected (too soon, wasn't really needed) Create React App, app. The code is most
 3. Drag and Drop your text to put it where ever you want, so that you won't have to put multiple spaces just to shift the whole thing off an offset space. (✅)
 4. Color selector for changing any selected text (✅)
 5. Save image functionality, sharing on popular social media functionality
-6. Instagram stories like range selector for seamlessly changing font size for selected text (like magic)
+6. Instagram stories like range selector for seamlessly changing font size for selected text (like magic) (✅)
 7. Different beautiful google fonts dropdown menu options.
+
+## TODOS
+1. Give a "base font size" option to the user
+2. Give a "reset to base font size" option, so that user can get back to the base font, after changing it with the range selector
+3. 

@@ -13,14 +13,23 @@ Utils for TODOS:
 
 
 ## TODOs: 
-[x]: Improve font rendering on canvas
-[x]: maintain the newlines on canvas when the text is copy pasted
+- []: Improve font rendering on canvas if it's possible
+- []: maintain the newlines on canvas when the text is copy pasted
+- []: Use localstorage to save the editor data to prevent accidental loss of the poem
+- []: make canvas resizable by dragging the corners
+- []: Think of a super lovely way to let users keep adding the font collection somehow.
+- []: a keyboard shortcut (cltr + uparrow) to put focus on range selector button, so that subsequent cltr+up/down arrow helps people
+change font size with their keyboard instead of using their mouses.
+- []: Give a "base font size" option to the user and Give a "reset to base font size" option, so that user can get back to the base font, after changing it with the range selector
+
+
 
 ## Explore: 
 
 - gradient text: https://css-tricks.com/snippets/css/gradient-text/
 - dragging and dropping isn't smooth, explore why
 - See the peformance section ( OffscreenCanvas ) api (canvas in a web worker)
+- `draft-js-custom-styles` is astonishingly heavy dependency, find out why.
 
 ## Cool things I could do after
 - This one is so cool, I how could I not think that, despite the face that I was doing the canvas foreignobject dom mapping!

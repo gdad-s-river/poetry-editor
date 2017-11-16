@@ -32,6 +32,5 @@ Ejected (too soon, wasn't really needed) Create React App, app. The code is most
 7. Different beautiful google fonts dropdown menu options.
 
 ## TODOS
-1. Give a "base font size" option to the user
-2. Give a "reset to base font size" option, so that user can get back to the base font, after changing it with the range selector
-3. 
+
+in [notes.md file](./notes.md) 

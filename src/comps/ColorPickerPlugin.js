@@ -1,9 +1,16 @@
 import createStyles from "draft-js-custom-styles";
 import ColorPicker from "./ColorPicker";
 
+const styleMap = {
+  STRIKETHROUGH: {
+    textDecoration: "line-through"
+  }
+};
+
 const { styles, customStyleFn, exporter } = createStyles(
   ["color", "font-size"],
-  "CUSTOM_"
+  "CUSTOM_",
+  styleMap
 );
 
 const addColor = (updateEditorState, getEditorState) => color => {

@@ -3,23 +3,42 @@ import React from "react";
 import Draft from "draft-js";
 import { stateToHTML } from "draft-js-export-html";
 import { ChromePicker } from "react-color";
-import FontColorPicker, {
-  colorPickerPlugin
-} from "./components/ColorPickerPlugin";
+import FontColorPicker, { colorPickerPlugin } from "./comps/ColorPickerPlugin";
 
-import FontSizeChanger from "./components/FontSizeChanger";
+import FontSizeChanger from "./comps/FontSizeChanger";
 
-// import debounce from "lodash.debounce";
-
-// import importedStyles from "./importedStyles.js";
 import "./reset.css";
 import "draft-js/dist/Draft.css";
 
-// function log(name, val) {
-//   console.log(`${name}: `, val);
-// }
+const styleMap = {
+  STRIKETHROUGH: {
+    textDecoration: "line-through"
+  }
+};
 
-const { Editor, EditorState, getDefaultKeyBinding, RichUtils } = Draft;
+const {
+  Editor,
+  EditorState,
+  getDefaultKeyBinding,
+  RichUtils,
+  KeyBindingUtil,
+  Modifier
+} = Draft;
+
+const { hasCommandModifier } = KeyBindingUtil;
+
+function customKeyBindingFn(e) {
+  // e = synthetic keyboard event
+  if (e.shiftKey && hasCommandModifier(e)) {
+    switch (e.keyCode) {
+      case 83:
+        return "yo-strikethrough";
+      default:
+        return getDefaultKeyBinding(e);
+    }
+  }
+  return getDefaultKeyBinding(e);
+}
 
 const styles = {
   editor: {
@@ -28,7 +47,7 @@ const styles = {
     minHeight: 80,
     padding: 10,
     maxHeight: "10vh",
-    overflow: "scroll",
+    overflow: "auto",
     maxWidth: "80vw"
   },
   html: {
@@ -136,7 +155,7 @@ class MyEditor extends React.Component {
 
           body {
             margin: 0;
-            padding: 200px;
+            padding: 0;
             /* this improved the font rendering a little (not much visible change on small font sizes, 
               had to see at 500% zoom to see the difference)
               The above was checked with two separate backgrounds : white and some color
@@ -145,6 +164,51 @@ class MyEditor extends React.Component {
             */
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+          }
+
+          /* https://meyerweb.com/eric/tools/css/reset/ */
+          html, body, div, span, applet, object, iframe,
+          h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+          a, abbr, acronym, address, big, cite, code,
+          del, dfn, em, img, ins, kbd, q, s, samp,
+          small, strike, strong, sub, sup, tt, var,
+          b, u, i, center,
+          dl, dt, dd, ol, ul, li,
+          fieldset, form, label, legend,
+          table, caption, tbody, tfoot, thead, tr, th, td,
+          article, aside, canvas, details, embed, 
+          figure, figcaption, footer, header, hgroup, 
+          menu, nav, output, ruby, section, summary,
+          time, mark, audio, video {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-size: 100%;
+            font: inherit;
+            vertical-align: baseline;
+          }
+          /* HTML5 display-role reset for older browsers */
+          article, aside, details, figcaption, figure, 
+          footer, header, hgroup, menu, nav, section {
+            display: block;
+          }
+          body {
+            line-height: 1;
+          }
+          ol, ul {
+            list-style: none;
+          }
+          blockquote, q {
+            quotes: none;
+          }
+          blockquote:before, blockquote:after,
+          q:before, q:after {
+            content: '';
+            content: none;
+          }
+          table {
+            border-collapse: collapse;
+            border-spacing: 0;
           }
         </style>
         <foreignObject width="100%" height="100%">
@@ -157,7 +221,7 @@ class MyEditor extends React.Component {
   }
 
   componentDidUpdate() {
-    console.log("cDU fired!");
+    // console.log("cDU fired!");
     // remove previous image
     this.resetCanvas();
 
@@ -225,7 +289,7 @@ class MyEditor extends React.Component {
         need to do something about it.
       */
       draw();
-      console.log("have drawn");
+      // console.log("have drawn");
     };
 
     let that = this;
@@ -239,6 +303,8 @@ class MyEditor extends React.Component {
           the green "bar" before the image renders on canvas is always "composite layers")
            (I think?) because of which requestAnimationFrame was made at the first place
         )
+
+        update: read this: https://jakearchibald.com/2013/solving-rendering-perf-puzzles/
       */
       that.redrawImg();
       DOMURL.revokeObjectURL(url);
@@ -254,10 +320,40 @@ class MyEditor extends React.Component {
   }
 
   _handleKeyCommand(command, editorState) {
-    const newState = RichUtils.handleKeyCommand(editorState, command);
-    if (newState) {
-      this.onChange(newState);
+    if (command === "yo-strikethrough") {
+      // get a new editorstate using selected text and strikethrouging it
+      const { editorState } = this.state;
+      const selectionState = editorState.getSelection();
+      const currentContent = editorState.getCurrentContent();
+      const newContentState = Modifier.applyInlineStyle(
+        currentContent,
+        selectionState,
+        "STRIKETHROUGH"
+      );
+
+      /* 
+      I could have used the draftjs-custom-styles package utility
+      like I have for changing font and color of text, but it would
+      involve writing this in multiple files and passing around props (I think)
+      besides I wanted to have hands on how change inline styles myself so 😉
+      */
+
+      const newState = EditorState.push(
+        editorState,
+        newContentState,
+        "change-inline-style"
+      );
+      if (newState) {
+        this.onChange(newState);
+      }
+
       return true;
+    } else {
+      const newState = RichUtils.handleKeyCommand(editorState, command);
+      if (newState) {
+        this.onChange(newState);
+        return true;
+      }
     }
 
     return false;
@@ -332,7 +428,7 @@ class MyEditor extends React.Component {
 
   redrawImg() {
     this.myCanvas.ctx.fillRect(0, 0, this.myCanvas.width, this.myCanvas.height);
-    this.myCanvas.ctx.drawImage(this.img, this.imgX, this.imgY);
+    this.myCanvas.ctx.drawImage(this.img, this.imgX, this.imgY, 500, 500);
     requestAnimationFrame(this.redrawImg.bind(this));
   }
 
@@ -355,6 +451,34 @@ class MyEditor extends React.Component {
     this.setState({ isDragging: false });
   }
 
+  handleBeforeInput(chars, state) {
+    /*
+      below code to revert to default styles on next character enter
+    */
+    // console.log(state.toJS());
+
+    // const selection = state.getSelection();
+
+    // if (!selection.isCollapsed()) {
+    //   return false;
+    // }
+
+    // const startOffset = selection.getStartOffset();
+    // const content = state.getCurrentContent();
+    // const block = content.getBlockForKey(selection.getStartKey());
+
+    // const entity = block.getEntityAt(startOffset);
+    // if (entity === null) {
+    //   console.log("yeah science");
+    //   // const style = state.getCurrentInlineStyle();
+    //   const newContent = Modifier.insertText(content, selection, chars, null);
+    //   this.onChange(EditorState.push(state, newContent, "insert-characters"));
+    //   return "handled";
+    // }
+
+    return "not-handled";
+  }
+
   render() {
     const canvasStyles = {
       ...styles.canvas
@@ -372,11 +496,13 @@ class MyEditor extends React.Component {
           <Editor
             editorState={this.state.editorState}
             onChange={this.onChange}
-            keyBindingFn={getDefaultKeyBinding}
+            keyBindingFn={customKeyBindingFn}
             handleKeyCommand={this.handleKeyCommand}
             placeholder={`Writecha Poem Here!`}
             ref={ref => (this.editor = ref)}
             customStyleFn={this.picker.customStyleFn}
+            customStyleMap={styleMap}
+            handleBeforeInput={this.handleBeforeInput}
           />
         </div>
         <div style={styles.html}>
@@ -407,6 +533,8 @@ class MyEditor extends React.Component {
           font={this.picker.currentFontSize(editorState)}
           addFontSize={fontSize => this.picker.addFontSize(fontSize)}
           resetCanvas={this.resetCanvas}
+          editorState={editorState}
+          changeEditorState={this.onChange}
         />
         <div
           className="color-pickers"
@@ -428,13 +556,6 @@ class MyEditor extends React.Component {
             color={this.picker.currentColor(editorState)}
             toggleColor={color => this.picker.addColor(color)}
           />
-          {/* 
-          <ChromePicker
-            disableAlpha={true}
-            style={{ padding: "10px" }}
-            onChangeComplete={this.handleFontColorCompleteChange}
-            onChange={this.handleFontColorChange}
-          /> */}
         </div>
       </div>
     ];

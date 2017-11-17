@@ -6,7 +6,12 @@ import "draft-js-emoji-plugin/lib/plugin.css";
 import g from "glamorous";
 import debounce from "lodash/debounce";
 
+import createColorPickerUtil from "../utils/colorPickerUtil";
+
 import createBlockStylesPlugin from "../plugins/blockStyles";
+import getInitialEditorState from "../utils/getInitialEditorState";
+
+import { DYNAMIC_STYLES_PREFIX } from "../utils/colorPickerUtil";
 
 import "draft-js/dist/Draft.css";
 
@@ -21,19 +26,21 @@ class AwesomeEditor extends Component {
 
     const content = window.localStorage.getItem("content");
 
-    this.state = (() => {
-      /* check if there is saved content in localstorage*/
-      if (content) {
-        return {
-          editorState: EditorState.createWithContent(
-            convertFromRaw(JSON.parse(content))
-          )
-        };
-      } else {
-        return { editorState: EditorState.createEmpty() };
-      }
-    })();
+    this.state = {
+      editorState: getInitialEditorState(content)
+    };
+
+    this.cPickerUtil = createColorPickerUtil(
+      this.setEditorState,
+      this.getEditorState
+    );
+
+    this.props.setAddColor(color => this.cPickerUtil.addColor(color));
   }
+
+  getEditorState = () => {
+    return this.state.editorState;
+  };
 
   saveToLocalStorage = debounce(content => {
     window.localStorage.setItem(
@@ -42,10 +49,39 @@ class AwesomeEditor extends Component {
     );
   }, 500);
 
+  setEditorState = editorState => {
+    this.setState({ editorState: editorState });
+  };
+
   onChange = editorState => {
     const contentState = editorState.getCurrentContent();
     this.saveToLocalStorage(contentState);
-    this.setState({ editorState: editorState });
+
+    /* 
+      @description: 1. Map over all currentStyles (with is an Immutable OrderedSet)
+      2. Find the dynamically changed color style value
+      3. extract color from it and set currentColor (which is passed to colorpicker so that it would sync)
+    */
+
+    const currentStyles = editorState.getCurrentInlineStyle();
+    console.log(currentStyles.size);
+
+    if (!currentStyles.size) {
+      this.props.setCurrentColor("#000");
+    }
+
+    currentStyles.map((value, key, iter) => {
+      const COLOR_PREFIX = DYNAMIC_STYLES_PREFIX + "COLOR_";
+      if (value.startsWith(COLOR_PREFIX)) {
+        const color = value.replace(COLOR_PREFIX, "");
+        this.props.setCurrentColor(color);
+      } else {
+        this.props.setCurrentColor("#000");
+      }
+      return value;
+    });
+
+    this.setEditorState(editorState);
   };
 
   focus = () => this.editor.focus();
@@ -72,6 +108,8 @@ class AwesomeEditor extends Component {
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
           placeholder={`Writecha Poem Here!`}
+          stripPastedStyles={true}
+          customStyleFn={this.cPickerUtil.customStyleFn}
           plugins={[emojiPlugin, blockStylesPlugin]}
         />
         <EmojiSuggestions />

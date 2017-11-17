@@ -7,7 +7,7 @@ import ColorPicker from "./components/ColorPicker";
 // import SideKick from './components/SideKick'
 
 class PoetryEditor extends Component {
-  state = { hasFocus: false };
+  state = { hasFocus: false, currentColor: "#000", addColor: null };
 
   toggleFocus = newFocusVal => {
     this.setState((prevState, props) => {
@@ -17,6 +17,26 @@ class PoetryEditor extends Component {
         return;
       }
     });
+  };
+
+  /* setAddColor */
+  setAddColor = addColorFn => {
+    this.setState({
+      addColor: addColorFn
+    });
+  };
+
+  setCurrentColor = color => {
+    this.setState({
+      currentColor: color
+    });
+  };
+
+  handleCurrentColorChange = (color, event) => {
+    this.setState({ currentColor: color.hex });
+    if (this.state.addColor) {
+      this.state.addColor(color.hex);
+    }
   };
 
   render() {
@@ -32,11 +52,20 @@ class PoetryEditor extends Component {
           <CenterKick hasFocus={hasFocus}>
             <Logo />
           </CenterKick>
-          <Editor toggleFocus={this.toggleFocus} hasFocus={hasFocus} />
+          <Editor
+            toggleFocus={this.toggleFocus}
+            hasFocus={hasFocus}
+            currentColor={this.state.currentColor}
+            setAddColor={this.setAddColor}
+            setCurrentColor={this.setCurrentColor}
+          />
           <CenterKick hasFocus={hasFocus} />
         </SuperHero>
         <SideKicks hasFocus={hasFocus}>
-          <ColorPicker />
+          <ColorPicker
+            color={this.state.currentColor}
+            handleCurrentColorChange={this.handleCurrentColorChange}
+          />
         </SideKicks>
       </TopWrapper>
     );

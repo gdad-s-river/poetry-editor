@@ -25,11 +25,15 @@ change font size with their keyboard instead of using their mouses.
 
 
 ## Explore: 
-
+- [`handlePastedText`](https://draftjs.org/docs/api-reference-editor.html#handlepastedtext)
 - gradient text: https://css-tricks.com/snippets/css/gradient-text/
 - dragging and dropping isn't smooth, explore why
 - See the peformance section ( OffscreenCanvas ) api (canvas in a web worker)
 - `draft-js-custom-styles` is astonishingly heavy dependency, find out why.
+
+## Just Might Be Needs
+
+- If I want inline styles of every block in the selection read [this](https://github.com/facebook/draft-js/issues/602)
 
 ## Cool things I could do after
 - This one is so cool, I how could I not think that, despite the face that I was doing the canvas foreignobject dom mapping!

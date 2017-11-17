@@ -1,8 +1,24 @@
-import React from "react";
+import React, { Component } from "react";
 import { ChromePicker } from "react-color";
+import PropTypes from "prop-types";
 
-function ColorPicker() {
-  return <ChromePicker disableAlpha={true} />;
+class ColorPicker extends Component {
+  render() {
+    const { handleCurrentColorChange, color } = this.props;
+
+    return (
+      <ChromePicker
+        disableAlpha={true}
+        onChange={handleCurrentColorChange}
+        color={color}
+      />
+    );
+  }
 }
+
+ColorPicker.propTypes = {
+  color: PropTypes.string.isRequired,
+  handleCurrentColorChange: PropTypes.func.isRequired
+};
 
 export default ColorPicker;

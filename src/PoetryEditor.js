@@ -47,6 +47,8 @@ export default PoetryEditor;
 
 /* Styles */
 
+const FOCUSSED_BACKGROUND = "#5d5e5f";
+
 const tWrapNSideKicksCommonStyles = {
   flex: 1
 };
@@ -87,10 +89,10 @@ const CenterKick = g.div(
     ...kicksCommonStyles
   },
   ({ hasFocus }) => ({
-    background: hasFocus ? "#5d5e5f" : "#7ec6ff"
+    background: hasFocus ? FOCUSSED_BACKGROUND : "#7ec6ff"
   })
 );
 
 const SideKicks = g.section(sideKicksStyle, ({ hasFocus }) => ({
-  background: hasFocus ? "#5d5e5f" : "#d4d4d4"
+  background: hasFocus ? FOCUSSED_BACKGROUND : "#d4d4d4"
 }));

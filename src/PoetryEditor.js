@@ -1,13 +1,22 @@
 import React, { Component } from "react";
 import g from "glamorous";
 
-import Editor from "./components/Editor";
+import AwesomeEditor from "./components/AwesomeEditor";
 import Logo from "./components/Logo";
 import ColorPicker from "./components/ColorPicker";
-// import SideKick from './components/SideKick'
+import ColorPickerSwitch from "./components/ColorPickerSwitch";
+import { setLSItem } from "./utils/localStorage";
+
+import "./overrides.css";
 
 class PoetryEditor extends Component {
-  state = { hasFocus: false, currentColor: "#000", addColor: null };
+  state = {
+    hasFocus: false,
+    currentColor: "#000",
+    addColor: null,
+    colorSwitch: "fontColor",
+    editorBgColor: "#fff"
+  };
 
   toggleFocus = newFocusVal => {
     this.setState((prevState, props) => {
@@ -19,13 +28,14 @@ class PoetryEditor extends Component {
     });
   };
 
-  /* setAddColor */
+  /* setAddColor (from colorPicker to change text color)*/
   setAddColor = addColorFn => {
     this.setState({
       addColor: addColorFn
     });
   };
 
+  /* from editor inlinestyle color to keep in sync with colorpicker*/
   setCurrentColor = color => {
     this.setState({
       currentColor: color
@@ -39,8 +49,31 @@ class PoetryEditor extends Component {
     }
   };
 
+  handleEditorBgChange = (color, event) => {
+    this.setState({ currentColor: color.hex });
+    setLSItem("editorBgColor", color.hex);
+  };
+
+  switchColorPicker = val => {
+    this.setState({
+      colorSwitch: val
+    });
+  };
+
   render() {
-    const { hasFocus } = this.state;
+    const { hasFocus, colorSwitch } = this.state;
+    console.log("inside app render ", this.state.currentColor);
+    switch (colorSwitch) {
+      case "fontColor":
+        this.handleColorChange = this.handleCurrentColorChange;
+        break;
+      case "imgBg":
+        this.handleColorChange = this.handleEditorBgChange;
+        break;
+      default:
+        this.handleColorChange = this.handleCurrentColorChange;
+        break;
+    }
 
     return (
       <TopWrapper>
@@ -52,20 +85,33 @@ class PoetryEditor extends Component {
           <CenterKick hasFocus={hasFocus}>
             <Logo />
           </CenterKick>
-          <Editor
+          <AwesomeEditor
             toggleFocus={this.toggleFocus}
             hasFocus={hasFocus}
             currentColor={this.state.currentColor}
             setAddColor={this.setAddColor}
             setCurrentColor={this.setCurrentColor}
+            editorBgColor={this.state.editorBgColor}
+            colorSwitch={this.state.colorSwitch}
+            switchColorPicker={this.switchColorPicker}
           />
           <CenterKick hasFocus={hasFocus} />
         </SuperHero>
         <SideKicks hasFocus={hasFocus}>
-          <ColorPicker
-            color={this.state.currentColor}
-            handleCurrentColorChange={this.handleCurrentColorChange}
-          />
+          <SideKickRightWrapper>
+            <ColorPicker
+              color={this.state.currentColor}
+              handleColorChange={this.handleColorChange}
+            />
+          </SideKickRightWrapper>
+
+          <SideKickRightWrapper>
+            <ColorPickerSwitch
+              colorSwitch={colorSwitch}
+              switchColorPicker={this.switchColorPicker}
+              setCurrentColor={this.setCurrentColor}
+            />
+          </SideKickRightWrapper>
         </SideKicks>
       </TopWrapper>
     );
@@ -90,11 +136,15 @@ const TopWrapper = g.div({
   ...tWrapNSideKicksCommonStyles
 });
 
+TopWrapper.displayName = "TopWrapper";
+
 const SuperHero = g.section({
   height: "100%",
   display: "flex",
   flexDirection: "column"
 });
+
+SuperHero.displayName = "SuperHero";
 
 const kicksCommonStyles = {
   transition: "background 0.4s"
@@ -105,6 +155,7 @@ const sideKicksStyle = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
+  flexDirection: "column",
   ...tWrapNSideKicksCommonStyles,
   ...kicksCommonStyles
 };
@@ -122,6 +173,14 @@ const CenterKick = g.div(
   })
 );
 
+CenterKick.display = "CenterKick";
+
 const SideKicks = g.section(sideKicksStyle, ({ hasFocus }) => ({
   background: hasFocus ? FOCUSSED_BACKGROUND : "#d4d4d4"
 }));
+
+SideKicks.displayName = "SideKick";
+
+const SideKickRightWrapper = g.div({
+  padding: "10px 0"
+});

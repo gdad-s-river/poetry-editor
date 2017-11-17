@@ -12,6 +12,7 @@ import createBlockStylesPlugin from "../plugins/blockStyles";
 import getInitialEditorState from "../utils/getInitialEditorState";
 
 import { DYNAMIC_STYLES_PREFIX } from "../utils/colorPickerUtil";
+import { getLSItem } from "../utils/localStorage";
 
 import "draft-js/dist/Draft.css";
 
@@ -57,49 +58,67 @@ class AwesomeEditor extends Component {
     const contentState = editorState.getCurrentContent();
     this.saveToLocalStorage(contentState);
 
-    /* 
-      @description: 1. Map over all currentStyles (with is an Immutable OrderedSet)
-      2. Find the dynamically changed color style value
-      3. extract color from it and set currentColor (which is passed to colorpicker so that it would sync)
-    */
-
-    const currentStyles = editorState.getCurrentInlineStyle();
-    console.log(currentStyles.size);
-
-    if (!currentStyles.size) {
-      this.props.setCurrentColor("#000");
-    }
-
-    currentStyles.map((value, key, iter) => {
-      const COLOR_PREFIX = DYNAMIC_STYLES_PREFIX + "COLOR_";
-      if (value.startsWith(COLOR_PREFIX)) {
-        const color = value.replace(COLOR_PREFIX, "");
-        this.props.setCurrentColor(color);
-      } else {
-        this.props.setCurrentColor("#000");
-      }
-      return value;
-    });
-
     this.setEditorState(editorState);
+
+    this.syncCurrentFontColorWithPicker(editorState);
   };
 
   focus = () => this.editor.focus();
 
-  handleFocus = () => {
+  handleFocus = (e, { getEditorState }) => {
     this.props.toggleFocus(true);
+    this.props.switchColorPicker("fontColor");
+
+    this.syncCurrentFontColorWithPicker(getEditorState());
   };
 
   handleBlur = () => {
     this.props.toggleFocus(false);
   };
 
+  syncCurrentFontColorWithPicker(editorState) {
+    const currentStyles = editorState.getCurrentInlineStyle();
+    const BLACK = "#000";
+
+    if (!currentStyles.size) {
+      this.props.setCurrentColor(BLACK);
+    }
+
+    const COLOR_PREFIX = DYNAMIC_STYLES_PREFIX + "COLOR_";
+
+    if (this.props.colorSwitch === "fontColor") {
+      let filteredStyle = currentStyles.filter(val => {
+        return val.startsWith(COLOR_PREFIX);
+      });
+
+      const firstNOnlyPrefixedStyle = filteredStyle.first();
+
+      if (firstNOnlyPrefixedStyle) {
+        let currentSelectionStyle = firstNOnlyPrefixedStyle.replace(
+          COLOR_PREFIX,
+          ""
+        );
+        this.props.setCurrentColor(currentSelectionStyle);
+      } else {
+        this.props.setCurrentColor(BLACK);
+      }
+    } else {
+      this.props.setCurrentColor(this.bgColor);
+    }
+  }
+
   render() {
+    const { hasFocus } = this.props;
+
+    let bgColor =
+      this.props.colorSwitch === "fontColor" ? "#fff" : this.props.currentColor;
+
     return (
       <EditorWrapper
         className="editor-wrapper"
         onClick={this.focus}
-        hasFocus={this.props.hasFocus}
+        hasFocus={hasFocus}
+        bgColor={bgColor}
       >
         <Editor
           editorState={this.state.editorState}
@@ -133,8 +152,14 @@ const EditorWrapper = g.div(
     zIndex: "99",
     transition: "box-shadow 0.4s, border 0.4s"
   },
-  ({ hasFocus }) => ({
-    boxShadow: hasFocus ? "0px 0px 25px 0px #000" : "none",
-    border: hasFocus ? "none" : "2px solid #bdbdbd"
-  })
+  ({ hasFocus, bgColor }) => {
+    const storedEditorBgColor = getLSItem("editorBgColor");
+    return {
+      boxShadow: hasFocus ? "0px 0px 25px 0px #000" : "none",
+      border: hasFocus ? "none" : "2px solid #bdbdbd",
+      background: storedEditorBgColor
+        ? storedEditorBgColor
+        : bgColor ? bgColor : "#fff"
+    };
+  }
 );

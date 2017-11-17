@@ -4,12 +4,11 @@ import PropTypes from "prop-types";
 
 class ColorPicker extends Component {
   render() {
-    const { handleCurrentColorChange, color } = this.props;
-
+    const { color, handleColorChange } = this.props;
     return (
       <ChromePicker
         disableAlpha={true}
-        onChange={handleCurrentColorChange}
+        onChange={handleColorChange}
         color={color}
       />
     );
@@ -18,7 +17,7 @@ class ColorPicker extends Component {
 
 ColorPicker.propTypes = {
   color: PropTypes.string.isRequired,
-  handleCurrentColorChange: PropTypes.func.isRequired
+  handleColorChange: PropTypes.func.isRequired
 };
 
 export default ColorPicker;

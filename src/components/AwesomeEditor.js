@@ -4,7 +4,11 @@ import Editor from "draft-js-plugins-editor";
 import createEmojiPlugin from "draft-js-emoji-plugin";
 import "draft-js-emoji-plugin/lib/plugin.css";
 import g from "glamorous";
-import debounce from "lodash/debounce";
+import debounce from "lodash.debounce";
+import camelCase from "lodash.camelcase";
+
+import { reverseString, hasNumber } from "../utils/stringUtils";
+import { isEmptyObject } from "../utils/objectUtils";
 
 import createColorPickerUtil from "../utils/colorPickerUtil";
 
@@ -37,6 +41,9 @@ class AwesomeEditor extends Component {
     );
 
     this.props.setAddColor(color => this.cPickerUtil.addColor(color));
+    this.props.setAddFontSize(fontSize =>
+      this.cPickerUtil.addFontSize(fontSize)
+    );
   }
 
   getEditorState = () => {
@@ -60,7 +67,7 @@ class AwesomeEditor extends Component {
 
     this.setEditorState(editorState);
 
-    this.syncCurrentFontColorWithPicker(editorState);
+    this.syncCurrentDynamicStylesWithSources(editorState);
   };
 
   focus = () => this.editor.focus();
@@ -69,14 +76,14 @@ class AwesomeEditor extends Component {
     this.props.toggleFocus(true);
     this.props.switchColorPicker("fontColor");
 
-    this.syncCurrentFontColorWithPicker(getEditorState());
+    this.syncCurrentDynamicStylesWithSources(getEditorState());
   };
 
   handleBlur = () => {
     this.props.toggleFocus(false);
   };
 
-  syncCurrentFontColorWithPicker(editorState) {
+  syncCurrentDynamicStylesWithSources(editorState) {
     const currentStyles = editorState.getCurrentInlineStyle();
     const BLACK = "#000";
 
@@ -85,7 +92,44 @@ class AwesomeEditor extends Component {
     }
 
     const COLOR_PREFIX = DYNAMIC_STYLES_PREFIX + "COLOR_";
+    const regex = /_(.+)/;
 
+    /*
+      All this map, split, filter, map, reverse exercise so that I could I could use DRY
+      still haven't used this effort because I'm still manually setting at hinge = 1
+      TODO
+    */
+    const dynamicStyles = currentStyles
+      .filter(val => val.startsWith(DYNAMIC_STYLES_PREFIX))
+      .map(val => {
+        const withoutPrevixVal = val.replace(`${DYNAMIC_STYLES_PREFIX}`, "");
+        const saneArray = reverseString(withoutPrevixVal)
+          .split(regex)
+          .filter(val => val.trim() !== "")
+          .map(val => reverseString(val))
+          .reverse();
+
+        return saneArray;
+      })
+      .reduce((acc, value) => {
+        acc[camelCase(value[0])] = value[1];
+        return acc;
+      }, {});
+
+    if (!isEmptyObject(dynamicStyles)) {
+      Object.keys(dynamicStyles).forEach(val => {
+        if (val === "fontSize") {
+          this.props.setCurrentFontSize(
+            parseInt(dynamicStyles[val].replace("px", ""), 10)
+          );
+        }
+      });
+    } else {
+      console.log("firing!");
+      this.props.setCurrentFontSize(16);
+    }
+
+    /* hinge: 1*/
     if (this.props.colorSwitch === "fontColor") {
       let filteredStyle = currentStyles.filter(val => {
         return val.startsWith(COLOR_PREFIX);

@@ -5,6 +5,7 @@ import AwesomeEditor from "./components/AwesomeEditor";
 import Logo from "./components/Logo";
 import ColorPicker from "./components/ColorPicker";
 import ColorPickerSwitch from "./components/ColorPickerSwitch";
+import FontSizeChanger from "./components/FontSizeChanger";
 import { setLSItem } from "./utils/localStorage";
 
 import "./overrides.css";
@@ -14,8 +15,10 @@ class PoetryEditor extends Component {
     hasFocus: false,
     currentColor: "#000",
     addColor: null,
+    addFontSize: null,
     colorSwitch: "fontColor",
-    editorBgColor: "#fff"
+    editorBgColor: "#fff",
+    currentFontSize: 16
   };
 
   toggleFocus = newFocusVal => {
@@ -60,9 +63,26 @@ class PoetryEditor extends Component {
     });
   };
 
+  handleCurrentFontSizeChange(fontSize) {
+    this.setState({ currentFontSize: fontSize });
+    if (this.state.addFontSize) {
+      this.state.addFontSize(fontSize);
+    }
+  }
+
+  setAddFontSize = addFontSizeFn => {
+    this.setState({ addFontSize: addFontSizeFn });
+  };
+
+  setCurrentFontSize = fontSize => {
+    this.setState({
+      currentFontSize: fontSize
+    });
+  };
+
   render() {
+    console.log(this.state.currentFontSize);
     const { hasFocus, colorSwitch } = this.state;
-    console.log("inside app render ", this.state.currentColor);
     switch (colorSwitch) {
       case "fontColor":
         this.handleColorChange = this.handleCurrentColorChange;
@@ -90,14 +110,23 @@ class PoetryEditor extends Component {
             hasFocus={hasFocus}
             currentColor={this.state.currentColor}
             setAddColor={this.setAddColor}
+            setAddFontSize={this.setAddFontSize}
             setCurrentColor={this.setCurrentColor}
             editorBgColor={this.state.editorBgColor}
             colorSwitch={this.state.colorSwitch}
             switchColorPicker={this.switchColorPicker}
+            setCurrentFontSize={this.setCurrentFontSize}
           />
           <CenterKick hasFocus={hasFocus} />
         </SuperHero>
         <SideKicks hasFocus={hasFocus}>
+          <SideKickRightWrapper>
+            <FontSizeChanger
+              currentFontSize={this.state.currentFontSize}
+              handleCurrentFontSizeChange={this.handleCurrentFontSizeChange}
+              addFontSize={this.state.addFontSize}
+            />
+          </SideKickRightWrapper>
           <SideKickRightWrapper>
             <ColorPicker
               color={this.state.currentColor}

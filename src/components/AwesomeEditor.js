@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { EditorState, convertToRaw, convertFromRaw } from "draft-js";
+import { convertToRaw } from "draft-js";
 import Editor from "draft-js-plugins-editor";
 import createEmojiPlugin from "draft-js-emoji-plugin";
 import "draft-js-emoji-plugin/lib/plugin.css";
@@ -7,7 +7,7 @@ import g from "glamorous";
 import debounce from "lodash.debounce";
 import camelCase from "lodash.camelcase";
 
-import { reverseString, hasNumber } from "../utils/stringUtils";
+import { reverseString } from "../utils/stringUtils";
 import { isEmptyObject } from "../utils/objectUtils";
 
 import createColorPickerUtil from "../utils/colorPickerUtil";
@@ -125,7 +125,6 @@ class AwesomeEditor extends Component {
         }
       });
     } else {
-      console.log("firing!");
       this.props.setCurrentFontSize(16);
     }
 

@@ -1,3 +1,8 @@
 .Select-control {
   width: 200px;
 }
+
+/* Since there aren't enough options to leverage typing to find options*/
+.Select-clear-zone {
+  display: none;
+}

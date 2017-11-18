@@ -81,7 +81,6 @@ class PoetryEditor extends Component {
   };
 
   render() {
-    console.log(this.state.currentFontSize);
     const { hasFocus, colorSwitch } = this.state;
     switch (colorSwitch) {
       case "fontColor":
@@ -125,6 +124,8 @@ class PoetryEditor extends Component {
               currentFontSize={this.state.currentFontSize}
               handleCurrentFontSizeChange={this.handleCurrentFontSizeChange}
               addFontSize={this.state.addFontSize}
+              setCurrentFontSize={this.setCurrentFontSize}
+              hasFocus={this.state.hasFocus}
             />
           </SideKickRightWrapper>
           <SideKickRightWrapper>
@@ -198,7 +199,7 @@ const CenterKick = g.div(
     ...kicksCommonStyles
   },
   ({ hasFocus }) => ({
-    background: hasFocus ? FOCUSSED_BACKGROUND : "#7ec6ff"
+    background: hasFocus ? FOCUSSED_BACKGROUND : "#A7B8C9"
   })
 );
 

@@ -12,7 +12,10 @@ const options = [
 
 class ColorPickerSwitch extends PureComponent {
   handleChange = val => {
-    this.props.switchColorPicker(val.value);
+    console.log(val);
+    if (val) {
+      this.props.switchColorPicker(val.value);
+    }
 
     const storedEditorBgColor = getLSItem("editorBgColor");
 

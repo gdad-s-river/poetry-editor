@@ -13,7 +13,7 @@ import { isEmptyObject } from "../utils/objectUtils";
 import createColorPickerUtil from "../utils/colorPickerUtil";
 
 import createBlockStylesPlugin from "../plugins/blockStyles";
-import getInitialEditorState from "../utils/getInitialEditorState";
+import getEditorStateFromLS from "../utils/getEditorStateFromLS";
 
 import { DYNAMIC_STYLES_PREFIX } from "../utils/colorPickerUtil";
 import { getLSItem } from "../utils/localStorage";
@@ -29,10 +29,8 @@ class AwesomeEditor extends Component {
   constructor(props) {
     super(props);
 
-    const content = window.localStorage.getItem("content");
-
     this.state = {
-      editorState: getInitialEditorState(content)
+      editorState: getEditorStateFromLS()
     };
 
     this.cPickerUtil = createColorPickerUtil(

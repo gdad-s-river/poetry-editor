@@ -19,7 +19,6 @@ const currentColor = getEditorState => () =>
   styles.color.current(getEditorState());
 
 const addFontSize = (updateEditorState, getEditorState) => fontSize => {
-  console.log(fontSize);
   return updateEditorState(styles.fontSize.add(getEditorState(), fontSize));
 };
 

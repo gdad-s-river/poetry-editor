@@ -25,7 +25,7 @@ class PoetryEditor extends Component {
     editorBgColor: "#fff",
     currentFontSize: 16,
     isModal: false,
-    editorState: getEditorStateFromLS("content")
+    editorState: getEditorStateFromLS()
   };
 
   componentDidMount() {

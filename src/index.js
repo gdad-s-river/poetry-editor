@@ -4,7 +4,7 @@ import PoetryEditor from "./PoetryEditor";
 import registerServiceWorker from "./registerServiceWorker";
 
 import "glamor/reset";
-import "./index.css";
+import "./css/index.css";
 
 ReactDOM.render(<PoetryEditor />, document.getElementById("root"));
 registerServiceWorker();

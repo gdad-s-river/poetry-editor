@@ -6,9 +6,14 @@ import Logo from "./components/Logo";
 import ColorPicker from "./components/ColorPicker";
 import ColorPickerSwitch from "./components/ColorPickerSwitch";
 import FontSizeChanger from "./components/FontSizeChanger";
+import CustomiseOverlay from "./components/CustomiseOverlay";
+import ModalOpener from "./components/ModalOpener";
+
 import { setLSItem } from "./utils/localStorage";
 
-import "./overrides.css";
+import getEditorStateFromLS from "./utils/getEditorStateFromLS";
+
+import "./css/overrides.css";
 
 class PoetryEditor extends Component {
   state = {
@@ -18,7 +23,35 @@ class PoetryEditor extends Component {
     addFontSize: null,
     colorSwitch: "fontColor",
     editorBgColor: "#fff",
-    currentFontSize: 16
+    currentFontSize: 16,
+    isModal: false,
+    editorState: getEditorStateFromLS("content")
+  };
+
+  componentDidMount() {
+    document
+      .querySelector("body")
+      .addEventListener("keydown", this.closeModalOnEscape);
+  }
+
+  componentWillUnmount() {
+    document
+      .querySelector("body")
+      .removeEventListener("keydown", this.closeModalOnEscape);
+  }
+
+  setAppEditorState = editorState => {
+    this.setState({ editorState });
+  };
+
+  setcPickerUtilOnApp = cPickerUtil => {
+    this.cPickerUtil = cPickerUtil;
+  };
+
+  closeModalOnEscape = e => {
+    if (e.keyCode === 27 && this.state.isModal) {
+      this.toggleModal();
+    }
   };
 
   toggleFocus = newFocusVal => {
@@ -63,6 +96,12 @@ class PoetryEditor extends Component {
     });
   };
 
+  toggleModal = () => {
+    this.setState((prevState, props) => {
+      return { isModal: !prevState.isModal };
+    });
+  };
+
   handleCurrentFontSizeChange(fontSize) {
     this.setState({ currentFontSize: fontSize });
     if (this.state.addFontSize) {
@@ -94,11 +133,19 @@ class PoetryEditor extends Component {
         break;
     }
 
-    return (
-      <TopWrapper>
+    return [
+      this.state.isModal ? (
+        <CustomiseOverlay
+          key="1"
+          toggleModal={this.toggleModal}
+          canvasBg={this.state.editorBgColor}
+          editorState={this.state.editorState}
+          cPickerUtil={this.cPickerUtil}
+        />
+      ) : null,
+      <TopWrapper key="2">
         <SideKicks hasFocus={hasFocus}>
-          <div>One dum </div>
-          <div>Two Dum</div>
+          <ModalOpener toggleModal={this.toggleModal} />
         </SideKicks>
         <SuperHero>
           <CenterKick hasFocus={hasFocus}>
@@ -111,10 +158,12 @@ class PoetryEditor extends Component {
             setAddColor={this.setAddColor}
             setAddFontSize={this.setAddFontSize}
             setCurrentColor={this.setCurrentColor}
+            setcPickerUtilOnApp={this.setcPickerUtilOnApp}
             editorBgColor={this.state.editorBgColor}
             colorSwitch={this.state.colorSwitch}
             switchColorPicker={this.switchColorPicker}
             setCurrentFontSize={this.setCurrentFontSize}
+            setAppEditorState={this.setAppEditorState}
           />
           <CenterKick hasFocus={hasFocus} />
         </SuperHero>
@@ -144,7 +193,7 @@ class PoetryEditor extends Component {
           </SideKickRightWrapper>
         </SideKicks>
       </TopWrapper>
-    );
+    ];
   }
 }
 
@@ -167,6 +216,8 @@ const TopWrapper = g.div({
 });
 
 TopWrapper.displayName = "TopWrapper";
+
+export { TopWrapper };
 
 const SuperHero = g.section({
   height: "100%",

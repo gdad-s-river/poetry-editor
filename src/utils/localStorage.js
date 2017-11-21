@@ -1,9 +1,13 @@
 function getLSItem(itemName) {
-  return window.localStorage.getItem(itemName);
+  if (window) {
+    return window.localStorage.getItem(itemName);
+  }
 }
 
 function setLSItem(itemName, value) {
-  window.localStorage.setItem(itemName, value);
+  if (window) {
+    window.localStorage.setItem(itemName, value);
+  }
 }
 
 export { getLSItem, setLSItem };

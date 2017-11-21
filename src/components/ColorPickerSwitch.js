@@ -12,7 +12,6 @@ const options = [
 
 class ColorPickerSwitch extends PureComponent {
   handleChange = val => {
-    console.log(val);
     if (val) {
       this.props.switchColorPicker(val.value);
     }

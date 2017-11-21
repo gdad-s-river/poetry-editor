@@ -23,7 +23,6 @@ class FontSizeChanger extends PureComponent {
   }
 
   render() {
-    console.log(this.props.currentFontSize);
     return (
       <FontSizeChangerWrapper>
         <label htmlFor="font-size-changer" />

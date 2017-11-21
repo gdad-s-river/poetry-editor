@@ -41,9 +41,16 @@ class AwesomeEditor extends Component {
     );
 
     this.props.setAddColor(color => this.cPickerUtil.addColor(color));
+    this.props.setcPickerUtilOnApp(this.cPickerUtil);
+
     this.props.setAddFontSize(fontSize =>
       this.cPickerUtil.addFontSize(fontSize)
     );
+  }
+
+  componentDidUpdate() {
+    const contentState = this.state.editorState.getCurrentContent();
+    this.saveToLocalStorage(contentState);
   }
 
   getEditorState = () => {
@@ -55,17 +62,18 @@ class AwesomeEditor extends Component {
       "content",
       JSON.stringify(convertToRaw(content))
     );
-  }, 500);
+  }, 100);
 
   setEditorState = editorState => {
     this.setState({ editorState: editorState });
   };
 
   onChange = editorState => {
-    const contentState = editorState.getCurrentContent();
-    this.saveToLocalStorage(contentState);
+    // const contentState = editorState.getCurrentContent();
+    // this.saveToLocalStorage(contentState);
 
     this.setEditorState(editorState);
+    this.props.setAppEditorState(editorState);
 
     this.syncCurrentDynamicStylesWithSources(editorState);
   };

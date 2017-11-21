@@ -130,6 +130,7 @@ class MyCanvas extends Component {
 
   handleMouseDown = e => {
     this.setState({ isDragging: true });
+    this.props.setDraggingStatusForOverlay(true);
   };
 
   handleMouseUp = () => {
@@ -138,6 +139,7 @@ class MyCanvas extends Component {
 
   stopDragging = () => {
     this.setState({ isDragging: false });
+    this.props.setDraggingStatusForOverlay(false);
   };
 
   handleMouseOut = () => {
@@ -201,7 +203,6 @@ class MyCanvas extends Component {
         ref={ref => (this.canvas = ref)}
         onMouseDown={this.handleMouseDown}
         onMouseUp={this.handleMouseUp}
-        onMouseOut={this.handleMouseOut}
         onMouseMove={this.handleMouseMove}
       />
     );

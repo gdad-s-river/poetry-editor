@@ -9,9 +9,13 @@ import TheCanvas from "./TheCanvas";
 
 class CustomiseOverlay extends Component {
   handleClick = e => {
-    if (e.target.tagName !== "CANVAS") {
+    if (e.target.tagName !== "CANVAS" && !this.isDragging) {
       this.props.toggleModal();
     }
+  };
+
+  setDraggingStatusForOverlay = isDragging => {
+    this.isDragging = isDragging;
   };
 
   render() {
@@ -27,6 +31,7 @@ class CustomiseOverlay extends Component {
                 canvasBg={canvasBg}
                 editorState={editorState}
                 cPickerUtil={cPickerUtil}
+                setDraggingStatusForOverlay={this.setDraggingStatusForOverlay}
               />
             </TopWrapper>
           </ModalContentWrapper>

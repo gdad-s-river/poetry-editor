@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { stateToHTML } from "draft-js-export-html";
+// import { stateToHTML } from "draft-js-export-html";
 
 import { getLSItem, setLSItem } from "../utils/localStorage";
 
@@ -14,6 +14,41 @@ class MyCanvas extends Component {
   state = {
     isDragging: false
   };
+
+  constructor(props) {
+    super(props);
+    this.dragHeight =
+      document.querySelector("div[data-contents]").getBoundingClientRect()
+        .height / 2;
+
+    const blockMap = this.props.editorState.getCurrentContent().getBlockMap();
+
+    const lengthOfBlocks = blockMap
+      .map(contentBlock => contentBlock.getLength())
+      .toJS();
+
+    const maxLength = Math.max(...Object.values(lengthOfBlocks));
+
+    const selectorKey =
+      blockMap
+        .filter((contentBlock, key, iter) => {
+          return contentBlock.getLength() === maxLength;
+        })
+        .keySeq()
+        .first() + "-0-0";
+
+    const constituents = document.querySelector(
+      `div[data-offset-key="${selectorKey}"] div[data-offset-key="${selectorKey}"]`
+    ).childNodes;
+
+    const longestHorizontalLength = Array.from(
+      constituents
+    ).reduce((acc, val) => {
+      return acc + val.getBoundingClientRect().width;
+    }, 0);
+
+    this.dragWidth = longestHorizontalLength / 2;
+  }
 
   componentDidMount() {
     this.drawImage();
@@ -57,9 +92,13 @@ class MyCanvas extends Component {
     let imprintData = `
       <svg xmlns="http://www.w3.org/2000/svg" width="500" height="500">
         <style>
-          html {
-            
+          html, body {
+            padding:0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
           }
+
           body {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -119,7 +158,7 @@ class MyCanvas extends Component {
   }
 
   createMarkup() {
-    const { editorState, cPickerUtil } = this.props;
+    // const { editorState, cPickerUtil } = this.props;
     // const contentState = editorState.getCurrentContent();
     // const inlineStyles = cPickerUtil.exporter(editorState);
     // const html = stateToHTML(contentState, { inlineStyles });
@@ -142,10 +181,6 @@ class MyCanvas extends Component {
     this.props.setDraggingStatusForOverlay(false);
   };
 
-  handleMouseOut = () => {
-    this.stopDragging();
-  };
-
   setCanvasMouseState(e) {
     let cDimensions = this.myC.getBoundingClientRect();
     /**
@@ -154,8 +189,8 @@ class MyCanvas extends Component {
      * using things which I do not understand
      */
 
-    let offsetX = cDimensions.left + document.body.scrollLeft;
-    let offsetY = cDimensions.top + document.body.scrollTop;
+    let offsetX = cDimensions.left + document.body.scrollLeft + this.dragWidth;
+    let offsetY = cDimensions.top + document.body.scrollTop + this.dragHeight;
 
     this.imgX = e.clientX - offsetX;
     this.imgY = e.clientY - offsetY;

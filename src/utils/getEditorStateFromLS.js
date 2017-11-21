@@ -10,8 +10,6 @@ function getEditorStateFromLS() {
 
   const storedEditorContent = JSON.parse(storedEditorContentString);
 
-  console.log(!!Object.keys(storedEditorContent).length);
-
   if (
     storedEditorContent.constructor === Object &&
     !!Object.keys(storedEditorContent).length

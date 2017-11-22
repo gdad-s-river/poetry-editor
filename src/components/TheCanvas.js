@@ -21,33 +21,105 @@ class MyCanvas extends Component {
       document.querySelector("div[data-contents]").getBoundingClientRect()
         .height / 2;
 
-    const blockMap = this.props.editorState.getCurrentContent().getBlockMap();
+    /**
+     * TURNS OUT, IT'S A VERY COMPLEX PROBLEM A.K.A FIND "VISUAL CENTER" OF ANY ARBITRARY COMPONENT
+     * THANKS TO [@fatman](https://github.com/fatman-) WHO ANSWERED MY QUESTION [HERE](http://bit.ly/visual-center-polygon)
+     * THIS IS AN OVERKILL FOR MY USECASE. BUT I'M KEEPING ALL THE COMMENTED CODE HERE FOR TIME BEING, BECAUSE IT
+     * WAS A LEARNING EXPERIENCE USING DRAFTJS AND IMMUTABLEJS
+     */
 
-    const lengthOfBlocks = blockMap
-      .map(contentBlock => contentBlock.getLength())
-      .toJS();
+    /**
+     * TO FIND THE "VISIBLE" MIDDLE OF THE TEXT
+     * POSSIBLE SOLUTION: to find the average of all the block character lengths
+     * and then extrapolate the length of the "vertical middle" character block (Math.floor(blockMap.length)'s block)
+     * to the length of the average that came.
+     */
 
-    const maxLength = Math.max(...Object.values(lengthOfBlocks));
+    // const blockMap = this.props.editorState.getCurrentContent().getBlockMap();
 
-    const selectorKey =
-      blockMap
-        .filter((contentBlock, key, iter) => {
-          return contentBlock.getLength() === maxLength;
-        })
-        .keySeq()
-        .first() + "-0-0";
+    // const middleVerticalBlockIndex = Math.floor(blockMap.size / 2) - 1;
 
-    const constituents = document.querySelector(
-      `div[data-offset-key="${selectorKey}"] div[data-offset-key="${selectorKey}"]`
-    ).childNodes;
+    // /**
+    //  * @TODO: this kinda like working as filter, I don't know how internall
+    //  */
+    // const midBlockOrderedMap = blockMap.mapEntries((entry, index) => {
+    //   if (index === middleVerticalBlockIndex) {
+    //     return entry;
+    //   }
+    //   return;
+    // });
 
-    const longestHorizontalLength = Array.from(
-      constituents
-    ).reduce((acc, val) => {
-      return acc + val.getBoundingClientRect().width;
-    }, 0);
+    // const midBlock = midBlockOrderedMap.first();
+    // const midBlockKey = midBlock.getKey();
+    // const midBlockCharLength = midBlock.getLength();
 
-    this.dragWidth = longestHorizontalLength / 2;
+    // const midBlockLengthSelector = `${midBlockKey}-0-0`;
+
+    // const sumOfAllBlockLengths = blockMap.reduce((acc, val) => {
+    //   return (acc += val.getLength());
+    // }, 0);
+
+    // const constituents = document.querySelector(
+    //   `div[data-offset-key="${midBlockLengthSelector}"] div[data-offset-key="${
+    //     midBlockLengthSelector
+    //   }"]`
+    // ).childNodes;
+
+    // /**
+    //  * Length of midblock = summation of length of mid block's constituents
+    //  */
+
+    // const lengthOfMidBlock = Array.from(constituents).reduce((acc, val) => {
+    //   return acc + val.getBoundingClientRect().width;
+    // }, 0);
+
+    // const average = Math.floor(sumOfAllBlockLengths / blockMap.size);
+
+    // this.dragWidth = lengthOfMidBlock / midBlockCharLength * average;
+
+    // /**
+    //  * THE FOLLOWING WAS AN ATTEMPT TO FIND THE CENTER OF THE LONGEST CHARACTER BLOCK
+    //  * WHICH DIDN'T TURN OUT TO BE "VISIBLE" CENTER OF THE WHOLE TEXT AND
+    //  * FEELS A BIT WEIRD IF THE LONGEST TEXT BLOCK IS MUCH LONGER THAN THE REST
+    //  *
+    //  * Find the greatest length block, find the width of it's div child by recursing on its children
+    //  * and summing up their width, i.e. div(block) div(it's child) -> children spans. Sum up widths
+    //  * of all children spans
+    //  */
+
+    // const blockMap = this.props.editorState.getCurrentContent().getBlockMap();
+
+    // const lengthOfBlocks = blockMap
+    //   .map(contentBlock => contentBlock.getLength())
+    //   .toJS();
+
+    // const maxLength = Math.max(...Object.values(lengthOfBlocks));
+
+    // const selectorKey =
+    //   blockMap
+    //     .filter((contentBlock, key, iter) => {
+    //       return contentBlock.getLength() === maxLength;
+    //     })
+    //     .keySeq()
+    //     .first() + "-0-0";
+
+    // const constituents = document.querySelector(
+    //   `div[data-offset-key="${selectorKey}"] div[data-offset-key="${selectorKey}"]`
+    // ).childNodes;
+
+    // const longestHorizontalLength = Array.from(
+    //   constituents
+    // ).reduce((acc, val) => {
+    //   return acc + val.getBoundingClientRect().width;
+    // }, 0);
+
+    // /**
+    //  * set the drag position of image so that it hinges at the middle of the greatest length
+    //  * which is not very convenient, since it's not the center of the text per say
+    //  * but is the center of greatest length block of the editor content
+    //  * @TODO: figure out algorithm to find the center of the text instead
+    //  */
+    // this.dragWidth = longestHorizontalLength / 2;
   }
 
   componentDidMount() {
@@ -114,7 +186,7 @@ class MyCanvas extends Component {
 
   drawImage() {
     /**
-     * these constant will vary when 
+     * these constant will vary when
      * canvas drag to change its size
      * is given as a functionality
      */
@@ -189,7 +261,7 @@ class MyCanvas extends Component {
      * using things which I do not understand
      */
 
-    let offsetX = cDimensions.left + document.body.scrollLeft + this.dragWidth;
+    let offsetX = cDimensions.left + document.body.scrollLeft;
     let offsetY = cDimensions.top + document.body.scrollTop + this.dragHeight;
 
     this.imgX = e.clientX - offsetX;

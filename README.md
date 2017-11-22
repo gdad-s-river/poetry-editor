@@ -7,7 +7,7 @@
 
 Poetry Editor is a desktop browser editor for writers, especially for instagram poets, who put poems on images and then post their work. If you want more functionalities thank what Mirakee, Yourquote and other otherwise awesome platforms give you, and if you are tired of false autocomplete suggestions, false positives on swipe keyboard or your thumbs go numb while typing on a mobile phone. This editor is for you 💛💛💛
 
-If you want to see the updated development version in action [watch this screencast video](goo.gl/Cgcid6)
+If you want to see the updated development version in action [watch this screencast video](https://goo.gl/Cgcid6)
 
 ## Dev Things
 

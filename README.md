@@ -46,6 +46,8 @@ gets copied ofcourse.
    selected text (like magic) (✅)
 7. Different beautiful google fonts dropdown menu options.
 
-## TODOS, OTHER FEATURES, CRAZY IDEAS:
+## TODOS, OTHER FEATURES, CRAZY IDEAS
 
-in [notes.md file](./notes.md)
+in [project todos](https://github.com/gdad-s-river/poetry-editor/projects/1)
+
+some here and there notes: in [notes.md file](./notes.md)

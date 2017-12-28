@@ -26,8 +26,8 @@ const emojiPlugin = createEmojiPlugin();
 const { EmojiSuggestions } = emojiPlugin;
 
 class AwesomeEditor extends Component {
-  constructor(props) {
-    super(props);
+  constructor(...args) {
+    super(...args);
 
     this.state = {
       editorState: getEditorStateFromLS()

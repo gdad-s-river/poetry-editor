@@ -16,11 +16,17 @@ import getEditorStateFromLS from "./utils/getEditorStateFromLS";
 import "./css/overrides.css";
 
 class PoetryEditor extends Component {
+  constructor(...args) {
+    super(...args);
+    this.addColor = () => {};
+    this.addFontSize = () => {};
+    this.addColor = this.addColor.bind(this);
+    this.addFontSize = this.addFontSize(this);
+  }
+
   state = {
-    hasFocus: false,
+    hasEditorFocus: false,
     currentColor: "#000",
-    addColor: null,
-    addFontSize: null,
     colorSwitch: "fontColor",
     editorBgColor: "#fff",
     currentFontSize: 16,
@@ -56,8 +62,8 @@ class PoetryEditor extends Component {
 
   toggleFocus = newFocusVal => {
     this.setState((prevState, props) => {
-      if (prevState.hasFocus !== newFocusVal) {
-        return { hasFocus: newFocusVal };
+      if (prevState.hasEditorFocus !== newFocusVal) {
+        return { hasEditorFocus: newFocusVal };
       } else {
         return;
       }
@@ -66,9 +72,11 @@ class PoetryEditor extends Component {
 
   /* setAddColor (from colorPicker to change text color)*/
   setAddColor = addColorFn => {
-    this.setState({
-      addColor: addColorFn
-    });
+    // this.setState({
+    //   addColor: addColorFn
+    // });
+
+    this.addColor = addColorFn;
   };
 
   /* from editor inlinestyle color to keep in sync with colorpicker*/
@@ -80,9 +88,9 @@ class PoetryEditor extends Component {
 
   handleCurrentColorChange = (color, event) => {
     this.setState({ currentColor: color.hex });
-    if (this.state.addColor) {
-      this.state.addColor(color.hex);
-    }
+    // if (this.addColor) {
+    this.addColor(color.hex);
+    // }
   };
 
   handleEditorBgChange = (color, event) => {
@@ -104,13 +112,14 @@ class PoetryEditor extends Component {
 
   handleCurrentFontSizeChange(fontSize) {
     this.setState({ currentFontSize: fontSize });
-    if (this.state.addFontSize) {
-      this.state.addFontSize(fontSize);
-    }
+    // if (this.addFontSize) {
+    this.addFontSize(fontSize);
+    // }
   }
 
   setAddFontSize = addFontSizeFn => {
-    this.setState({ addFontSize: addFontSizeFn });
+    // this.setState({ addFontSize: addFontSizeFn });
+    this.addFontSize = addFontSizeFn;
   };
 
   setCurrentFontSize = fontSize => {
@@ -120,7 +129,7 @@ class PoetryEditor extends Component {
   };
 
   render() {
-    const { hasFocus, colorSwitch } = this.state;
+    const { hasEditorFocus, colorSwitch } = this.state;
     switch (colorSwitch) {
       case "fontColor":
         this.handleColorChange = this.handleCurrentColorChange;
@@ -144,16 +153,16 @@ class PoetryEditor extends Component {
         />
       ) : null,
       <TopWrapper key="2">
-        <SideKicks hasFocus={hasFocus}>
+        <SideKicks hasEditorFocus={hasEditorFocus}>
           <ModalOpener toggleModal={this.toggleModal} />
         </SideKicks>
         <SuperHero>
-          <CenterKick hasFocus={hasFocus}>
+          <CenterKick hasEditorFocus={hasEditorFocus}>
             <Logo />
           </CenterKick>
           <AwesomeEditor
             toggleFocus={this.toggleFocus}
-            hasFocus={hasFocus}
+            hasEditorFocus={hasEditorFocus}
             currentColor={this.state.currentColor}
             setAddColor={this.setAddColor}
             setAddFontSize={this.setAddFontSize}
@@ -165,16 +174,16 @@ class PoetryEditor extends Component {
             setCurrentFontSize={this.setCurrentFontSize}
             setAppEditorState={this.setAppEditorState}
           />
-          <CenterKick hasFocus={hasFocus} />
+          <CenterKick hasEditorFocus={hasEditorFocus} />
         </SuperHero>
-        <SideKicks hasFocus={hasFocus}>
+        <SideKicks hasEditorFocus={hasEditorFocus}>
           <SideKickRightWrapper>
             <FontSizeChanger
               currentFontSize={this.state.currentFontSize}
               handleCurrentFontSizeChange={this.handleCurrentFontSizeChange}
-              addFontSize={this.state.addFontSize}
+              addFontSize={this.addFontSize}
               setCurrentFontSize={this.setCurrentFontSize}
-              hasFocus={this.state.hasFocus}
+              hasEditorFocus={this.state.hasEditorFocus}
             />
           </SideKickRightWrapper>
           <SideKickRightWrapper>
@@ -249,15 +258,15 @@ const CenterKick = g.div(
     justifyContent: "center",
     ...kicksCommonStyles
   },
-  ({ hasFocus }) => ({
-    background: hasFocus ? FOCUSSED_BACKGROUND : "#A7B8C9"
+  ({ hasEditorFocus }) => ({
+    background: hasEditorFocus ? FOCUSSED_BACKGROUND : "#A7B8C9"
   })
 );
 
 CenterKick.display = "CenterKick";
 
-const SideKicks = g.section(sideKicksStyle, ({ hasFocus }) => ({
-  background: hasFocus ? FOCUSSED_BACKGROUND : "#d4d4d4"
+const SideKicks = g.section(sideKicksStyle, ({ hasEditorFocus }) => ({
+  background: hasEditorFocus ? FOCUSSED_BACKGROUND : "#d4d4d4"
 }));
 
 SideKicks.displayName = "SideKick";

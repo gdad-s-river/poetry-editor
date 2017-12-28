@@ -3,6 +3,11 @@ import { ChromePicker } from "react-color";
 import PropTypes from "prop-types";
 
 class ColorPicker extends Component {
+  static defaultProps = {
+    color: "#000",
+    handleColorChange: () => {}
+  };
+
   render() {
     const { color, handleColorChange } = this.props;
     return (

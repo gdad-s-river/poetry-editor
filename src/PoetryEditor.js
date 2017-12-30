@@ -13,12 +13,19 @@ import { setLSItem } from "./utils/localStorage";
 
 import getEditorStateFromLS from "./utils/getEditorStateFromLS";
 
+import createColorPickerUtil from "./utils/colorPickerUtil";
+
 import "./css/overrides.css";
 
 class PoetryEditor extends Component {
   constructor(...args) {
     super(...args);
     this.cPickerUtil = () => {};
+
+    this.cPickerUtil = createColorPickerUtil(
+      this.setEditorState,
+      this.getEditorState
+    );
   }
 
   state = {
@@ -43,12 +50,12 @@ class PoetryEditor extends Component {
       .removeEventListener("keydown", this.closeModalOnEscape);
   }
 
-  setAppEditorState = editorState => {
-    this.setState({ editorState });
+  getEditorState = () => {
+    return this.state.editorState;
   };
 
-  setcPickerUtilOnApp = cPickerUtil => {
-    this.cPickerUtil = cPickerUtil;
+  setEditorState = editorState => {
+    this.setState({ editorState });
   };
 
   closeModalOnEscape = e => {
@@ -108,7 +115,7 @@ class PoetryEditor extends Component {
   };
 
   render() {
-    const { hasEditorFocus, colorSwitch } = this.state;
+    const { hasEditorFocus, colorSwitch, editorState } = this.state;
     switch (colorSwitch) {
       case "fontColor":
         this.handleColorChange = this.handleCurrentColorChange;
@@ -140,16 +147,17 @@ class PoetryEditor extends Component {
             <Logo />
           </CenterKick>
           <AwesomeEditor
+            cPickerUtil={this.cPickerUtil}
+            editorState={editorState}
             toggleFocus={this.toggleFocus}
             hasEditorFocus={hasEditorFocus}
             currentColor={this.state.currentColor}
             setCurrentColor={this.setCurrentColor}
-            setcPickerUtilOnApp={this.setcPickerUtilOnApp}
             editorBgColor={this.state.editorBgColor}
             colorSwitch={this.state.colorSwitch}
             switchColorPicker={this.switchColorPicker}
             setCurrentFontSize={this.setCurrentFontSize}
-            setAppEditorState={this.setAppEditorState}
+            setEditorState={this.setEditorState}
           />
           <CenterKick hasEditorFocus={hasEditorFocus} />
         </SuperHero>

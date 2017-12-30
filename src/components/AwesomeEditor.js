@@ -10,10 +10,7 @@ import camelCase from "lodash.camelcase";
 import { reverseString } from "../utils/stringUtils";
 import { isEmptyObject } from "../utils/objectUtils";
 
-import createColorPickerUtil from "../utils/colorPickerUtil";
-
 import createBlockStylesPlugin from "../plugins/blockStyles";
-import getEditorStateFromLS from "../utils/getEditorStateFromLS";
 
 import { DYNAMIC_STYLES_PREFIX } from "../utils/colorPickerUtil";
 import { getLSItem } from "../utils/localStorage";
@@ -26,34 +23,10 @@ const emojiPlugin = createEmojiPlugin();
 const { EmojiSuggestions } = emojiPlugin;
 
 class AwesomeEditor extends Component {
-  constructor(...args) {
-    super(...args);
-
-    this.state = {
-      editorState: getEditorStateFromLS()
-    };
-
-    this.cPickerUtil = createColorPickerUtil(
-      this.setEditorState,
-      this.getEditorState
-    );
-
-    // this.props.setAddColor(color => this.cPickerUtil.addColor(color));
-    this.props.setcPickerUtilOnApp(this.cPickerUtil);
-
-    // this.props.setAddFontSize(fontSize =>
-    //   this.cPickerUtil.addFontSize(fontSize)
-    // );
-  }
-
   componentDidUpdate() {
-    const contentState = this.state.editorState.getCurrentContent();
+    const contentState = this.props.editorState.getCurrentContent();
     this.saveToLocalStorage(contentState);
   }
-
-  getEditorState = () => {
-    return this.state.editorState;
-  };
 
   saveToLocalStorage = debounce(content => {
     window.localStorage.setItem(
@@ -62,17 +35,8 @@ class AwesomeEditor extends Component {
     );
   }, 100);
 
-  setEditorState = editorState => {
-    this.setState({ editorState: editorState });
-  };
-
   onChange = editorState => {
-    // const contentState = editorState.getCurrentContent();
-    // this.saveToLocalStorage(contentState);
-
-    this.setEditorState(editorState);
-    this.props.setAppEditorState(editorState);
-
+    this.props.setEditorState(editorState);
     this.syncCurrentDynamicStylesWithSources(editorState);
   };
 
@@ -157,7 +121,7 @@ class AwesomeEditor extends Component {
   }
 
   render() {
-    const { hasFocus } = this.props;
+    const { hasFocus, editorState, cPickerUtil } = this.props;
 
     let bgColor =
       this.props.colorSwitch === "fontColor" ? "#fff" : this.props.currentColor;
@@ -170,14 +134,14 @@ class AwesomeEditor extends Component {
         bgColor={bgColor}
       >
         <Editor
-          editorState={this.state.editorState}
+          editorState={editorState}
           onChange={this.onChange}
           ref={ref => (this.editor = ref)}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
           placeholder={`Writecha Poem Here!`}
           stripPastedStyles={true}
-          customStyleFn={this.cPickerUtil.customStyleFn}
+          customStyleFn={cPickerUtil.customStyleFn}
           plugins={[emojiPlugin, blockStylesPlugin]}
         />
         <EmojiSuggestions />

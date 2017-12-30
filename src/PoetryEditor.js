@@ -39,7 +39,13 @@ class PoetryEditor extends Component {
   };
 
   componentDidMount() {
-    document
+    // remove the first page load loader
+    let doc = document;
+    const pageLoaderEl = doc.getElementById("page-loader");
+    pageLoaderEl.parentNode.removeChild(pageLoaderEl);
+
+    this.setState({ loading: false });
+    doc
       .querySelector("body")
       .addEventListener("keydown", this.closeModalOnEscape);
   }

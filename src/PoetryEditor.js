@@ -18,10 +18,7 @@ import "./css/overrides.css";
 class PoetryEditor extends Component {
   constructor(...args) {
     super(...args);
-    this.addColor = () => {};
-    this.addFontSize = () => {};
-    this.addColor = this.addColor.bind(this);
-    this.addFontSize = this.addFontSize(this);
+    this.cPickerUtil = () => {};
   }
 
   state = {
@@ -70,15 +67,6 @@ class PoetryEditor extends Component {
     });
   };
 
-  /* setAddColor (from colorPicker to change text color)*/
-  setAddColor = addColorFn => {
-    // this.setState({
-    //   addColor: addColorFn
-    // });
-
-    this.addColor = addColorFn;
-  };
-
   /* from editor inlinestyle color to keep in sync with colorpicker*/
   setCurrentColor = color => {
     this.setState({
@@ -88,9 +76,7 @@ class PoetryEditor extends Component {
 
   handleCurrentColorChange = (color, event) => {
     this.setState({ currentColor: color.hex });
-    // if (this.addColor) {
-    this.addColor(color.hex);
-    // }
+    this.cPickerUtil.addColor(color.hex);
   };
 
   handleEditorBgChange = (color, event) => {
@@ -112,15 +98,8 @@ class PoetryEditor extends Component {
 
   handleCurrentFontSizeChange(fontSize) {
     this.setState({ currentFontSize: fontSize });
-    // if (this.addFontSize) {
-    this.addFontSize(fontSize);
-    // }
+    this.cPickerUtil.addFontSize(fontSize);
   }
-
-  setAddFontSize = addFontSizeFn => {
-    // this.setState({ addFontSize: addFontSizeFn });
-    this.addFontSize = addFontSizeFn;
-  };
 
   setCurrentFontSize = fontSize => {
     this.setState({
@@ -164,8 +143,6 @@ class PoetryEditor extends Component {
             toggleFocus={this.toggleFocus}
             hasEditorFocus={hasEditorFocus}
             currentColor={this.state.currentColor}
-            setAddColor={this.setAddColor}
-            setAddFontSize={this.setAddFontSize}
             setCurrentColor={this.setCurrentColor}
             setcPickerUtilOnApp={this.setcPickerUtilOnApp}
             editorBgColor={this.state.editorBgColor}
@@ -181,7 +158,7 @@ class PoetryEditor extends Component {
             <FontSizeChanger
               currentFontSize={this.state.currentFontSize}
               handleCurrentFontSizeChange={this.handleCurrentFontSizeChange}
-              addFontSize={this.addFontSize}
+              addFontSize={this.cPickerUtil.addFontSize}
               setCurrentFontSize={this.setCurrentFontSize}
               hasEditorFocus={this.state.hasEditorFocus}
             />

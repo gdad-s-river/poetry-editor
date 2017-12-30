@@ -38,12 +38,12 @@ class AwesomeEditor extends Component {
       this.getEditorState
     );
 
-    this.props.setAddColor(color => this.cPickerUtil.addColor(color));
+    // this.props.setAddColor(color => this.cPickerUtil.addColor(color));
     this.props.setcPickerUtilOnApp(this.cPickerUtil);
 
-    this.props.setAddFontSize(fontSize =>
-      this.cPickerUtil.addFontSize(fontSize)
-    );
+    // this.props.setAddFontSize(fontSize =>
+    //   this.cPickerUtil.addFontSize(fontSize)
+    // );
   }
 
   componentDidUpdate() {

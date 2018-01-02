@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { convertToRaw } from "draft-js";
 import Editor from "draft-js-plugins-editor";
 import createEmojiPlugin from "draft-js-emoji-plugin";
@@ -121,7 +122,7 @@ class AwesomeEditor extends Component {
   }
 
   render() {
-    const { hasFocus, editorState, cPickerUtil } = this.props;
+    const { hasEditorFocus, editorState, cPickerUtil } = this.props;
 
     let bgColor =
       this.props.colorSwitch === "fontColor" ? "#fff" : this.props.currentColor;
@@ -130,7 +131,7 @@ class AwesomeEditor extends Component {
       <EditorWrapper
         className="editor-wrapper"
         onClick={this.focus}
-        hasFocus={hasFocus}
+        hasEditorFocus={hasEditorFocus}
         bgColor={bgColor}
       >
         <Editor
@@ -163,16 +164,22 @@ const EditorWrapper = g.div(
     height: "500px",
     width: "500px",
     zIndex: "99",
-    transition: "box-shadow 0.4s, border 0.4s"
+    transition: "box-shadow 0.4s, border 0.4s",
+    border: "2px solid #d4d4d4"
   },
-  ({ hasFocus, bgColor }) => {
+  ({ hasEditorFocus, bgColor }) => {
     const storedEditorBgColor = getLSItem("editorBgColor");
     return {
-      boxShadow: hasFocus ? "0px 0px 25px 0px #000" : "none",
-      border: hasFocus ? "none" : "2px solid #bdbdbd",
+      boxShadow: hasEditorFocus ? "0px 0px 25px 0px #000" : "none",
       background: storedEditorBgColor
         ? storedEditorBgColor
         : bgColor ? bgColor : "#fff"
     };
   }
 );
+
+EditorWrapper.displayName = "EditorWrapper";
+EditorWrapper.propTypes = {
+  hasEditorFocus: PropTypes.bool.isRequired,
+  bgColor: PropTypes.string.isRequired
+};

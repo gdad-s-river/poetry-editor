@@ -1,21 +1,36 @@
 import React, { PureComponent } from "react";
 import g from "glamorous";
+import PropTypes from "prop-types";
 
 function convertToStringPxValue(fontSizeNumber) {
   return `${Math.floor(fontSizeNumber)}px`;
 }
 
 class FontSizeChanger extends PureComponent {
+  static propTypes = {
+    hasEditorFocus: PropTypes.bool.isRequired
+  };
+
   constructor(props) {
     super(props);
     this.intFontSize = convertToStringPxValue(this.props.currentFontSize);
   }
 
   handleOnChange = e => {
+    e.preventDefault();
+    const {
+      setCurrentFontSize,
+      addFontSize,
+      toggleFocus,
+      hasEditorFocus
+    } = this.props;
+
+    console.log(hasEditorFocus);
+    toggleFocus(true);
     const fontValue = e.target.value;
     this.intFontSize = `${Math.floor(fontValue)}px`;
-    this.props.setCurrentFontSize(fontValue);
-    this.props.addFontSize(this.intFontSize);
+    setCurrentFontSize(fontValue);
+    addFontSize(this.intFontSize);
   };
 
   componentWillReceiveProps(nextProps) {

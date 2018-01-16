@@ -202,7 +202,7 @@ class MyCanvas extends Component {
 
     const { width, height } = myC;
 
-    this.myC.ctx.fillStyle = getLSItem("editorBgColor");
+    this.myC.ctx.fillStyle = getLSItem("editorBgColor") || "#fff";
 
     /**
      * canvas clearing up method

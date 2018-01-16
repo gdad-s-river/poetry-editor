@@ -175,7 +175,6 @@ class PoetryEditor extends Component {
               addFontSize={this.cPickerUtil.addFontSize}
               setCurrentFontSize={this.setCurrentFontSize}
               hasEditorFocus={this.state.hasEditorFocus}
-              toggleFocus={this.toggleFocus}
             />
           </SideKickRightWrapper>
           <SideKickRightWrapper>

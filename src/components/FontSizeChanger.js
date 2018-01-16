@@ -1,62 +1,51 @@
 import React, { PureComponent } from "react";
 import g from "glamorous";
 import PropTypes from "prop-types";
-
-function convertToStringPxValue(fontSizeNumber) {
-  return `${Math.floor(fontSizeNumber)}px`;
-}
+import Slider from "./Slider";
 
 class FontSizeChanger extends PureComponent {
   static propTypes = {
     hasEditorFocus: PropTypes.bool.isRequired
   };
 
-  constructor(props) {
-    super(props);
-    this.intFontSize = convertToStringPxValue(this.props.currentFontSize);
+  static defaultProps = {
+    hasEditorFocus: false
+  };
+
+  constructor(...args) {
+    super(...args);
+
+    this.strPixieFontSize = `${this.props.currentFontSize}px`;
   }
 
-  handleOnChange = e => {
-    e.preventDefault();
-    const {
-      setCurrentFontSize,
-      addFontSize,
-      toggleFocus,
-      hasEditorFocus
-    } = this.props;
-
-    console.log(hasEditorFocus);
-    toggleFocus(true);
-    const fontValue = e.target.value;
-    this.intFontSize = `${Math.floor(fontValue)}px`;
-    setCurrentFontSize(fontValue);
-    addFontSize(this.intFontSize);
+  updateFontSize = sliderState => {
+    const { setCurrentFontSize, addFontSize } = this.props;
+    const fontSize = sliderState.values[0];
+    console.log(fontSize);
+    setCurrentFontSize(fontSize);
+    this.strPixieFontSize = `${fontSize}px`;
+    addFontSize(this.strPixieFontSize);
   };
 
   componentWillReceiveProps(nextProps) {
-    this.intFontSize = convertToStringPxValue(nextProps.currentFontSize);
+    this.strPixieFontSize = `${nextProps.currentFontSize}px`;
   }
 
   render() {
+    const { hasEditorFocus, currentFontSize } = this.props;
+    console.log(this.strPixieFontSize);
     return (
       <FontSizeChangerWrapper>
-        <label htmlFor="font-size-changer" />
-        <input
-          type="range"
-          id="font-size-changer"
-          min="0"
-          max="100"
-          step="any"
-          value={this.props.currentFontSize}
-          onChange={this.handleOnChange}
-          style={{
-            WebkitAppearance: "slider-vertical",
-            writingMode: "bt-lr"
-          }}
-          orient="vertical"
+        <Slider
+          handle={MyHandleMaker(hasEditorFocus)}
+          hasEditorFocus={hasEditorFocus}
+          orientation="vertical"
+          onValuesUpdated={this.updateFontSize}
+          values={[currentFontSize]}
+          min={16}
         />
         <FontSizeDisplay hasFocus={this.props.hasFocus}>
-          {this.intFontSize}
+          {this.strPixieFontSize}
         </FontSizeDisplay>
       </FontSizeChangerWrapper>
     );
@@ -77,4 +66,33 @@ const FontSizeDisplay = g.span(
     color: hasFocus ? "#fff" : "#000"
   })
 );
+
+function MyHandleMaker(hasEditorFocus) {
+  function CircleHandle({ style, ...passProps }) {
+    return (
+      <div
+        {...passProps}
+        style={{
+          ...style,
+          backgroundColor: "#fff",
+          border: hasEditorFocus ? "3px solid #48DBDB" : "3px solid #6D6D6D",
+          borderRadius: "100%",
+          cursor: "ns-resize",
+          height: 24,
+          width: 24,
+          zIndex: 3
+        }}
+      />
+    );
+  }
+
+  CircleHandle.propTypes = {
+    style: PropTypes.object
+  };
+  CircleHandle.defaultProps = {
+    style: null
+  };
+
+  return CircleHandle;
+}
 export default FontSizeChanger;

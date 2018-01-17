@@ -19,7 +19,7 @@ Utils for TODOS:
 * []: Think of a super lovely way to let users keep adding the font collection somehow.
 * []: a keyboard shortcut (cltr + uparrow) to put focus on range selector button, so that subsequent cltr+up/down arrow helps people
   change font size with their keyboard instead of using their mouses.
-* []: Give a "base font size" option to the user and Give a "reset to base font size" option, so that user can get back to the base font, after changing it with the range selector
+* []: Give a "base font size" option to the user and Give a "reset to base font size" option, so that user can get back to the base font, after changing it with the range select
 
 ## Explore:
 
@@ -42,3 +42,4 @@ Utils for TODOS:
 # IDEAS:
 
 Detect if the website is being accessed by the same laptop as the first time and if not, don't show the first welcome screen showing how to use the editor.
+

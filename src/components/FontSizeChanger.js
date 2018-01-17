@@ -44,7 +44,7 @@ class FontSizeChanger extends PureComponent {
           values={[currentFontSize]}
           min={16}
         />
-        <FontSizeDisplay hasFocus={this.props.hasFocus}>
+        <FontSizeDisplay hasEditorFocus={this.props.hasEditorFocus}>
           {this.strPixieFontSize}
         </FontSizeDisplay>
       </FontSizeChangerWrapper>
@@ -62,10 +62,14 @@ const FontSizeDisplay = g.span(
     fontSize: "20px",
     transition: "color 0.4s"
   },
-  ({ hasFocus }) => ({
-    color: hasFocus ? "#fff" : "#000"
+  ({ hasEditorFocus }) => ({
+    color: hasEditorFocus ? "#fff" : "#000"
   })
 );
+
+FontSizeDisplay.propTypes = {
+  hasEditorFocus: PropTypes.bool.isRequired
+};
 
 function MyHandleMaker(hasEditorFocus) {
   function CircleHandle({ style, ...passProps }) {

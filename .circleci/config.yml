@@ -22,14 +22,14 @@ jobs:
       - checkout
       - run: npm install
       - run: sudo yarn global add jq now now-realias now-no-alias
-      - run: npm run test
+      # - run: npm run test
       - run: npm run build
       - store_artifacts:
           path: build
       - run: now build -t ${NOW_TOKEN} --name=poetry-editor --static --public
       - run: now-realias
       - run: now rm -t ${NOW_TOKEN} $(now-no-alias | jq -r '.[] | .uid') -y
-      
+
       # Download and cache dependencies
       - restore_cache:
           keys:

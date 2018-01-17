@@ -1,0 +1,6 @@
+{
+  "alias": ["poetry-editor"],
+  "files": ["build"],
+  "name": "poetry-editor",
+  "public": true
+}

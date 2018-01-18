@@ -1349,6 +1349,14 @@ chalk@^2.0.0, chalk@^2.1.0:
     escape-string-regexp "^1.0.5"
     supports-color "^4.0.0"
 
+chalk@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/chalk/-/chalk-2.3.0.tgz#b5ea48efc9c1793dccc9b4767c93914d3f2d52ba"
+  dependencies:
+    ansi-styles "^3.1.0"
+    escape-string-regexp "^1.0.5"
+    supports-color "^4.0.0"
+
 chokidar@^1.6.0, chokidar@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-1.7.0.tgz#798e689778151c8076b4b360e5edd28cda2bb468"
@@ -1582,6 +1590,14 @@ cookie-signature@1.0.6:
 cookie@0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.3.1.tgz#e7e0a1f9ef43b4c8ba925c5c5a96e806d16873bb"
+
+copy-paste@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/copy-paste/-/copy-paste-1.3.0.tgz#a7e6c4a1c28fdedf2b081e72b97df2ef95f471ed"
+  dependencies:
+    iconv-lite "^0.4.8"
+  optionalDependencies:
+    sync-exec "~0.6.x"
 
 core-js@^1.0.0:
   version "1.2.7"
@@ -2907,7 +2923,7 @@ glob-parent@^2.0.0:
   dependencies:
     is-glob "^2.0.0"
 
-glob@^7.0.3, glob@^7.0.5, glob@^7.1.1, glob@^7.1.2:
+glob@^7.0.0, glob@^7.0.3, glob@^7.0.5, glob@^7.1.1, glob@^7.1.2:
   version "7.1.2"
   resolved "https://registry.yarnpkg.com/glob/-/glob-7.1.2.tgz#c19c9df9a028702d678612384a6552404c636d15"
   dependencies:
@@ -3259,7 +3275,7 @@ iconv-lite@0.4.13:
   version "0.4.13"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.13.tgz#1f88aba4ab0b1508e8312acc39345f36e992e2f2"
 
-iconv-lite@0.4.19, iconv-lite@^0.4.17, iconv-lite@~0.4.13:
+iconv-lite@0.4.19, iconv-lite@^0.4.17, iconv-lite@^0.4.8, iconv-lite@~0.4.13:
   version "0.4.19"
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
 
@@ -5550,6 +5566,12 @@ readdirp@^2.0.0:
     readable-stream "^2.0.2"
     set-immediate-shim "^1.0.1"
 
+rechoir@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/rechoir/-/rechoir-0.6.2.tgz#85204b54dba82d5742e28c96756ef43af50e3384"
+  dependencies:
+    resolve "^1.1.6"
+
 recursive-readdir@2.2.1:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/recursive-readdir/-/recursive-readdir-2.2.1.tgz#90ef231d0778c5ce093c9a48d74e5c5422d13a99"
@@ -5770,6 +5792,12 @@ resolve@1.1.7:
   version "1.1.7"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.1.7.tgz#203114d82ad2c5ed9e8e0411b3932875e889e97b"
 
+resolve@^1.1.6:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.5.0.tgz#1f09acce796c9a762579f31b2c1cc4c3cddf9f36"
+  dependencies:
+    path-parse "^1.0.5"
+
 resolve@^1.2.0, resolve@^1.3.2:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.4.0.tgz#a75be01c53da25d934a98ebd0e4c4a7312f92a86"
@@ -5963,6 +5991,14 @@ shell-quote@1.6.1:
     array-map "~0.0.0"
     array-reduce "~0.0.0"
     jsonify "~0.0.0"
+
+shelljs@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/shelljs/-/shelljs-0.8.0.tgz#12f561c52ec5d0d3315af15616c011a18ff80d59"
+  dependencies:
+    glob "^7.0.0"
+    interpret "^1.0.0"
+    rechoir "^0.6.2"
 
 shellwords@^0.1.0:
   version "0.1.1"
@@ -6281,6 +6317,10 @@ sw-toolbox@^3.4.0:
 symbol-tree@^3.2.1:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.2.tgz#ae27db38f660a7ae2e1c3b7d1bc290819b8519e6"
+
+sync-exec@~0.6.x:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/sync-exec/-/sync-exec-0.6.2.tgz#717d22cc53f0ce1def5594362f3a89a2ebb91105"
 
 table@^4.0.1:
   version "4.0.2"

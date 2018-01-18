@@ -1,29 +1,28 @@
 import React, { Component } from "react";
 import { ChromePicker } from "react-color";
+import PropTypes from "prop-types";
 
-class FontColorPicker extends Component {
-  state = {
-    color: {
-      r: "255",
-      g: "255",
-      b: "255",
-      a: "255"
-    }
-  };
-  handleChange = color => {
-    const { r, g, b, a } = color.rgb;
-    this.props.toggleColor(`rgba(${r},${g},${b},${a})`);
+class ColorPicker extends Component {
+  static defaultProps = {
+    color: "#000",
+    handleColorChange: () => {}
   };
 
   render() {
+    const { color, handleColorChange } = this.props;
     return (
       <ChromePicker
         disableAlpha={true}
-        color={this.props.color || this.state.color}
-        onChange={this.handleChange}
+        onChange={handleColorChange}
+        color={color}
       />
     );
   }
 }
 
-export default FontColorPicker;
+ColorPicker.propTypes = {
+  color: PropTypes.string.isRequired,
+  handleColorChange: PropTypes.func.isRequired
+};
+
+export default ColorPicker;

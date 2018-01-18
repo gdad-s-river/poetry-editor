@@ -1,5 +1,3 @@
-
-
 ## Problem Being Solved
 
 Poetry Editor is a desktop browser editor for writers, especially for instagram
@@ -49,3 +47,7 @@ gets copied ofcourse.
 in [project todos](https://github.com/gdad-s-river/poetry-editor/projects/1)
 
 some here and there notes: in [notes.md file](./notes.md)
+
+## TODOS, OTHER FEATURES, CRAZY IDEAS:
+
+in [notes.md file](./notes.md)

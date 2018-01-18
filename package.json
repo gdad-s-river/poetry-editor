@@ -11,12 +11,14 @@
     "babel-preset-react-app": "^3.0.3",
     "babel-runtime": "6.26.0",
     "case-sensitive-paths-webpack-plugin": "2.1.1",
-    "chalk": "1.1.3",
+    "chalk": "^2.3.0",
     "css-loader": "0.28.4",
     "dotenv": "4.0.0",
     "draft-js": "^0.10.4",
-    "draft-js-custom-styles": "^1.3.2",
+    "draft-js-custom-styles": "^2.0.0",
+    "draft-js-emoji-plugin": "^2.0.1",
     "draft-js-export-html": "^1.2.0",
+    "draft-js-plugins-editor": "^2.0.3",
     "eslint": "4.4.1",
     "eslint-config-react-app": "^2.0.1",
     "eslint-loader": "1.9.0",
@@ -31,16 +33,21 @@
     "glamorous": "^4.9.7",
     "html-webpack-plugin": "2.29.0",
     "jest": "20.0.4",
+    "lodash.camelcase": "^4.3.0",
     "lodash.debounce": "^4.0.8",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.2.0",
     "postcss-loader": "2.0.6",
     "promise": "8.0.1",
+    "prop-types": "^15.6.0",
     "react": "^16.0.0",
     "react-color": "^2.13.8",
     "react-dev-utils": "^4.1.0",
     "react-dom": "^16.0.0",
     "react-dropzone": "^4.2.0",
+    "react-media": "^1.6.1",
+    "react-select": "^1.0.0-rc.10",
+    "rheostat": "^2.1.3",
     "style-loader": "0.18.2",
     "sw-precache-webpack-plugin": "0.11.4",
     "url-loader": "0.5.9",
@@ -52,10 +59,17 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "node scripts/test.js --env=jsdom",
+    "deploy": "rm -rf build && npm run build && cd build && now --name poetry-editor && npm run removeweirdno",
+    "removeweirdno": "./gscripts/nowalias.js"
+  },
+  "bin": {
+    "nowalias": "bin/gscripts/nowalias.js"
   },
   "devDependencies": {
-    "webpack-dashboard": "^1.0.0"
+    "copy-paste": "^1.3.0",
+    "extract-loader": "^1.0.1",
+    "shelljs": "^0.8.0"
   },
   "jest": {
     "collectCoverageFrom": [

@@ -65,6 +65,8 @@ class PoetryEditor extends Component {
       if (prevState.hasEditorFocus !== newFocusVal) {
         return { hasEditorFocus: newFocusVal };
       } else {
+				// this is a fibre thing, wasn't there before
+				// see – https://twitter.com/nishb1/status/852542873803345920
         return;
       }
     });

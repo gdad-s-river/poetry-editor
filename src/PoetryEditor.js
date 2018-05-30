@@ -1,21 +1,16 @@
-import React, { Component } from "react";
 import g from "glamorous";
-
+import React, { Component } from "react";
 import AwesomeEditor from "./components/AwesomeEditor";
-import Logo from "./components/Logo";
 import ColorPicker from "./components/ColorPicker";
 import ColorPickerSwitch from "./components/ColorPickerSwitch";
-import FontSizeChanger from "./components/FontSizeChanger";
 import CustomiseOverlay from "./components/CustomiseOverlay";
+import FontSizeChanger from "./components/FontSizeChanger";
+import Logo from "./components/Logo";
 import ModalOpener from "./components/ModalOpener";
-
-import { setLSItem } from "./utils/localStorage";
-
-import getEditorStateFromLS from "./utils/getEditorStateFromLS";
-
-import createColorPickerUtil from "./utils/colorPickerUtil";
-
 import "./css/overrides.css";
+import createColorPickerUtil from "./utils/colorPickerUtil";
+import getEditorStateFromLS from "./utils/getEditorStateFromLS";
+import { setLSItem } from "./utils/localStorage";
 
 class PoetryEditor extends Component {
   constructor(...args) {

@@ -1,7 +1,7 @@
 import React from "react";
 
 function Logo() {
-  return <div>Logo Here</div>;
+  return <div style={{fontSize: '2rem'}}>Poetry Editor</div>;
 }
 
 export default Logo;

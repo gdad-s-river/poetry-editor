@@ -28,6 +28,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+		"eject": "react-scripts eject",
+		"deploy": "rm -rf build && npm run build && cd build && now --name poetry-editor && npm run removeweirdno",
+    "removeweirdno": "./gscripts/nowalias.js"
   }
 }

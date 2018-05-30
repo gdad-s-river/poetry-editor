@@ -1,27 +1,18 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
 import { convertToRaw } from "draft-js";
 import Editor from "draft-js-plugins-editor";
-import createEmojiPlugin from "draft-js-emoji-plugin";
-import "draft-js-emoji-plugin/lib/plugin.css";
+import "draft-js/dist/Draft.css";
 import g from "glamorous";
-import debounce from "lodash.debounce";
 import camelCase from "lodash.camelcase";
-
-import { reverseString } from "../utils/stringUtils";
-import { isEmptyObject } from "../utils/objectUtils";
-
+import debounce from "lodash.debounce";
+import PropTypes from "prop-types";
+import React, { Component } from "react";
 import createBlockStylesPlugin from "../plugins/blockStyles";
-
 import { DYNAMIC_STYLES_PREFIX } from "../utils/colorPickerUtil";
 import { getLSItem } from "../utils/localStorage";
-
-import "draft-js/dist/Draft.css";
+import { isEmptyObject } from "../utils/objectUtils";
+import { reverseString } from "../utils/stringUtils";
 
 const blockStylesPlugin = createBlockStylesPlugin();
-
-const emojiPlugin = createEmojiPlugin();
-const { EmojiSuggestions } = emojiPlugin;
 
 class AwesomeEditor extends Component {
   componentDidUpdate() {
@@ -143,9 +134,8 @@ class AwesomeEditor extends Component {
           placeholder={`Writecha Poem Here!`}
           stripPastedStyles={true}
           customStyleFn={cPickerUtil.customStyleFn}
-          plugins={[emojiPlugin, blockStylesPlugin]}
+          plugins={[blockStylesPlugin]}
         />
-        <EmojiSuggestions />
       </EditorWrapper>
     );
   }

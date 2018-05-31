@@ -1,16 +1,15 @@
-import g from "glamorous";
-import React, { Component } from "react";
-import AwesomeEditor from "./components/AwesomeEditor";
-import ColorPicker from "./components/ColorPicker";
-import ColorPickerSwitch from "./components/ColorPickerSwitch";
-import CustomiseOverlay from "./components/CustomiseOverlay";
-import FontSizeChanger from "./components/FontSizeChanger";
-import Logo from "./components/Logo";
-import ModalOpener from "./components/ModalOpener";
-import "./css/overrides.css";
-import createColorPickerUtil from "./utils/colorPickerUtil";
-import getEditorStateFromLS from "./utils/getEditorStateFromLS";
-import { setLSItem } from "./utils/localStorage";
+import g from 'glamorous';
+import React, { Component, Fragment } from 'react';
+import AwesomeEditor from './components/AwesomeEditor';
+import ColorPicker from './components/ColorPicker';
+import ColorPickerSwitch from './components/ColorPickerSwitch';
+import CustomiseOverlay from './components/CustomiseOverlay';
+import FontSizeChanger from './components/FontSizeChanger';
+import Logo from './components/Logo';
+import ModalOpener from './components/ModalOpener';
+import './css/overrides.css';
+import createColorPickerUtil from './utils/colorPickerUtil';
+import { setLSItem } from './utils/localStorage';
 
 class PoetryEditor extends Component {
   constructor(...args) {
@@ -18,41 +17,31 @@ class PoetryEditor extends Component {
     this.cPickerUtil = () => {};
 
     this.cPickerUtil = createColorPickerUtil(
-      this.setEditorState,
-      this.getEditorState
+      this.props.setEditorState,
+      this.props.getEditorState,
     );
   }
 
   state = {
-    hasEditorFocus: false,
-    currentColor: "#000",
-    colorSwitch: "fontColor",
-    editorBgColor: "#fff",
+    currentColor: '#000',
+    colorSwitch: 'fontColor',
+    editorBgColor: '#fff',
     currentFontSize: 16,
     isModal: false,
-    editorState: getEditorStateFromLS()
   };
 
   componentDidMount() {
     let doc = document;
     doc
-      .querySelector("body")
-      .addEventListener("keydown", this.closeModalOnEscape);
+      .querySelector('body')
+      .addEventListener('keydown', this.closeModalOnEscape);
   }
 
   componentWillUnmount() {
     document
-      .querySelector("body")
-      .removeEventListener("keydown", this.closeModalOnEscape);
+      .querySelector('body')
+      .removeEventListener('keydown', this.closeModalOnEscape);
   }
-
-  getEditorState = () => {
-    return this.state.editorState;
-  };
-
-  setEditorState = editorState => {
-    this.setState({ editorState });
-  };
 
   closeModalOnEscape = e => {
     if (e.keyCode === 27 && this.state.isModal) {
@@ -60,22 +49,10 @@ class PoetryEditor extends Component {
     }
   };
 
-  toggleFocus = newFocusVal => {
-    this.setState((prevState, props) => {
-      if (prevState.hasEditorFocus !== newFocusVal) {
-        return { hasEditorFocus: newFocusVal };
-      } else {
-				// this is a fibre thing, wasn't there before
-				// see – https://twitter.com/nishb1/status/852542873803345920
-        return;
-      }
-    });
-  };
-
   /* from editor inlinestyle color to keep in sync with colorpicker*/
   setCurrentColor = color => {
     this.setState({
-      currentColor: color
+      currentColor: color,
     });
   };
 
@@ -86,12 +63,12 @@ class PoetryEditor extends Component {
 
   handleEditorBgChange = (color, event) => {
     this.setState({ currentColor: color.hex });
-    setLSItem("editorBgColor", color.hex);
+    setLSItem('editorBgColor', color.hex);
   };
 
   switchColorPicker = val => {
     this.setState({
-      colorSwitch: val
+      colorSwitch: val,
     });
   };
 
@@ -108,17 +85,22 @@ class PoetryEditor extends Component {
 
   setCurrentFontSize = fontSize => {
     this.setState({
-      currentFontSize: fontSize
+      currentFontSize: fontSize,
     });
   };
 
   render() {
-    const { hasEditorFocus, colorSwitch, editorState } = this.state;
+    const { colorSwitch, editorBgColor } = this.state;
+    const {
+      state: { editorFocus, editorState },
+      setEditorFocus,
+      setEditorState,
+    } = this.props;
     switch (colorSwitch) {
-      case "fontColor":
+      case 'fontColor':
         this.handleColorChange = this.handleCurrentColorChange;
         break;
-      case "imgBg":
+      case 'imgBg':
         this.handleColorChange = this.handleEditorBgChange;
         break;
       default:
@@ -126,66 +108,67 @@ class PoetryEditor extends Component {
         break;
     }
 
-    return [
-      this.state.isModal ? (
-        <CustomiseOverlay
-          key="1"
-          toggleModal={this.toggleModal}
-          canvasBg={this.state.editorBgColor}
-          editorState={this.state.editorState}
-          cPickerUtil={this.cPickerUtil}
-        />
-      ) : null,
-      <TopWrapper key="2">
-        <SideKicks hasEditorFocus={hasEditorFocus}>
-          <ModalOpener toggleModal={this.toggleModal} />
-        </SideKicks>
-        <SuperHero>
-          <CenterKick hasEditorFocus={hasEditorFocus}>
-            <Logo />
-          </CenterKick>
-          <AwesomeEditor
-            cPickerUtil={this.cPickerUtil}
+    return (
+      <Fragment>
+        {this.state.isModal ? (
+          <CustomiseOverlay
+            toggleModal={this.toggleModal}
+            canvasBg={editorBgColor}
             editorState={editorState}
-            toggleFocus={this.toggleFocus}
-            hasEditorFocus={hasEditorFocus}
-            currentColor={this.state.currentColor}
-            setCurrentColor={this.setCurrentColor}
-            editorBgColor={this.state.editorBgColor}
-            colorSwitch={this.state.colorSwitch}
-            switchColorPicker={this.switchColorPicker}
-            setCurrentFontSize={this.setCurrentFontSize}
-            setEditorState={this.setEditorState}
+            cPickerUtil={this.cPickerUtil}
           />
-          <CenterKick hasEditorFocus={hasEditorFocus} />
-        </SuperHero>
-        <SideKicks hasEditorFocus={hasEditorFocus}>
-          <SideKickRightWrapper>
-            <FontSizeChanger
-              currentFontSize={this.state.currentFontSize}
-              handleCurrentFontSizeChange={this.handleCurrentFontSizeChange}
-              addFontSize={this.cPickerUtil.addFontSize}
-              setCurrentFontSize={this.setCurrentFontSize}
-              hasEditorFocus={this.state.hasEditorFocus}
-            />
-          </SideKickRightWrapper>
-          <SideKickRightWrapper>
-            <ColorPicker
-              color={this.state.currentColor}
-              handleColorChange={this.handleColorChange}
-            />
-          </SideKickRightWrapper>
-
-          <SideKickRightWrapper>
-            <ColorPickerSwitch
-              colorSwitch={colorSwitch}
-              switchColorPicker={this.switchColorPicker}
+        ) : null}
+        <TopWrapper>
+          <SideKicks hasEditorFocus={editorFocus}>
+            <ModalOpener toggleModal={this.toggleModal} />
+          </SideKicks>
+          <SuperHero>
+            <CenterKick hasEditorFocus={editorFocus}>
+              <Logo />
+            </CenterKick>
+            <AwesomeEditor
+              cPickerUtil={this.cPickerUtil}
+              currentColor={this.state.currentColor}
               setCurrentColor={this.setCurrentColor}
+              editorBgColor={this.state.editorBgColor}
+              colorSwitch={this.state.colorSwitch}
+              switchColorPicker={this.switchColorPicker}
+              setCurrentFontSize={this.setCurrentFontSize}
+              hasEditorFocus={editorFocus}
+              setEditorFocus={setEditorFocus}
+              editorState={editorState}
+              setEditorState={setEditorState}
             />
-          </SideKickRightWrapper>
-        </SideKicks>
-      </TopWrapper>
-    ];
+            <CenterKick hasEditorFocus={editorFocus} />
+          </SuperHero>
+          <SideKicks hasEditorFocus={editorFocus}>
+            <SideKickRightWrapper>
+              <FontSizeChanger
+                currentFontSize={this.state.currentFontSize}
+                handleCurrentFontSizeChange={this.handleCurrentFontSizeChange}
+                addFontSize={this.cPickerUtil.addFontSize}
+                setCurrentFontSize={this.setCurrentFontSize}
+                hasEditorFocus={editorFocus}
+              />
+            </SideKickRightWrapper>
+            <SideKickRightWrapper>
+              <ColorPicker
+                color={this.state.currentColor}
+                handleColorChange={this.handleColorChange}
+              />
+            </SideKickRightWrapper>
+
+            <SideKickRightWrapper>
+              <ColorPickerSwitch
+                colorSwitch={colorSwitch}
+                switchColorPicker={this.switchColorPicker}
+                setCurrentColor={this.setCurrentColor}
+              />
+            </SideKickRightWrapper>
+          </SideKicks>
+        </TopWrapper>
+      </Fragment>
+    );
   }
 }
 
@@ -193,67 +176,67 @@ export default PoetryEditor;
 
 /* Styles */
 
-const FOCUSSED_BACKGROUND = "#5d5e5f";
+const FOCUSSED_BACKGROUND = '#5d5e5f';
 
 const tWrapNSideKicksCommonStyles = {
-  flex: 1
+  flex: 1,
 };
 
 const TopWrapper = g.div({
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  height: "100%",
-  ...tWrapNSideKicksCommonStyles
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '100%',
+  ...tWrapNSideKicksCommonStyles,
 });
 
-TopWrapper.displayName = "TopWrapper";
+TopWrapper.displayName = 'TopWrapper';
 
 export { TopWrapper };
 
 const SuperHero = g.section({
-  height: "100%",
-  display: "flex",
-  flexDirection: "column"
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
 });
 
-SuperHero.displayName = "SuperHero";
+SuperHero.displayName = 'SuperHero';
 
 const kicksCommonStyles = {
-  transition: "background 0.4s"
+  transition: 'background 0.4s',
 };
 
 const sideKicksStyle = {
-  height: "100%",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  flexDirection: "column",
+  height: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexDirection: 'column',
   ...tWrapNSideKicksCommonStyles,
-  ...kicksCommonStyles
+  ...kicksCommonStyles,
 };
 
 const CenterKick = g.div(
   {
     flexGrow: 1,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    ...kicksCommonStyles
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...kicksCommonStyles,
   },
   ({ hasEditorFocus }) => ({
-    background: hasEditorFocus ? FOCUSSED_BACKGROUND : "#A7B8C9"
-  })
+    background: hasEditorFocus ? FOCUSSED_BACKGROUND : '#A7B8C9',
+  }),
 );
 
-CenterKick.display = "CenterKick";
+CenterKick.display = 'CenterKick';
 
 const SideKicks = g.section(sideKicksStyle, ({ hasEditorFocus }) => ({
-  background: hasEditorFocus ? FOCUSSED_BACKGROUND : "#d4d4d4"
+  background: hasEditorFocus ? FOCUSSED_BACKGROUND : '#d4d4d4',
 }));
 
-SideKicks.displayName = "SideKick";
+SideKicks.displayName = 'SideKick';
 
 const SideKickRightWrapper = g.div({
-  padding: "10px 0"
+  padding: '10px 0',
 });

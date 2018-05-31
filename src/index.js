@@ -1,11 +1,18 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import UseDesktop from "./UseDesktop"
+import 'glamor/reset';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'unstated';
+import UNSTATED from 'unstated-debug';
+import UseDesktop from './UseDesktop';
+import './css/index.css';
+import registerServiceWorker from './registerServiceWorker';
 
-import registerServiceWorker from "./registerServiceWorker";
+UNSTATED.logStateChanges = process.env.NODE_ENV === 'development';
 
-import "glamor/reset";
-import "./css/index.css";
-
-ReactDOM.render(<UseDesktop />, document.getElementById("root"));
+ReactDOM.render(
+  <Provider>
+    <UseDesktop />
+  </Provider>,
+  document.getElementById('root'),
+);
 registerServiceWorker();

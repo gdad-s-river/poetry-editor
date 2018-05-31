@@ -1,15 +1,15 @@
-import React, { PureComponent } from "react";
-import g from "glamorous";
-import PropTypes from "prop-types";
-import Slider from "./Slider";
+import g from 'glamorous';
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import Slider from './Slider';
 
 class FontSizeChanger extends PureComponent {
   static propTypes = {
-    hasEditorFocus: PropTypes.bool.isRequired
+    hasEditorFocus: PropTypes.bool.isRequired,
   };
 
   static defaultProps = {
-    hasEditorFocus: false
+    hasEditorFocus: false,
   };
 
   constructor(...args) {
@@ -21,7 +21,6 @@ class FontSizeChanger extends PureComponent {
   updateFontSize = sliderState => {
     const { setCurrentFontSize, addFontSize } = this.props;
     const fontSize = sliderState.values[0];
-    console.log(fontSize);
     setCurrentFontSize(fontSize);
     this.strPixieFontSize = `${fontSize}px`;
     addFontSize(this.strPixieFontSize);
@@ -33,7 +32,6 @@ class FontSizeChanger extends PureComponent {
 
   render() {
     const { hasEditorFocus, currentFontSize } = this.props;
-    console.log(this.strPixieFontSize);
     return (
       <FontSizeChangerWrapper>
         <Slider
@@ -53,22 +51,22 @@ class FontSizeChanger extends PureComponent {
 }
 
 const FontSizeChangerWrapper = g.div({
-  display: "flex",
-  alignItems: "center"
+  display: 'flex',
+  alignItems: 'center',
 });
 
 const FontSizeDisplay = g.span(
   {
-    fontSize: "20px",
-    transition: "color 0.4s"
+    fontSize: '20px',
+    transition: 'color 0.4s',
   },
   ({ hasEditorFocus }) => ({
-    color: hasEditorFocus ? "#fff" : "#000"
-  })
+    color: hasEditorFocus ? '#fff' : '#000',
+  }),
 );
 
 FontSizeDisplay.propTypes = {
-  hasEditorFocus: PropTypes.bool.isRequired
+  hasEditorFocus: PropTypes.bool.isRequired,
 };
 
 function MyHandleMaker(hasEditorFocus) {
@@ -78,23 +76,23 @@ function MyHandleMaker(hasEditorFocus) {
         {...passProps}
         style={{
           ...style,
-          backgroundColor: "#fff",
-          border: hasEditorFocus ? "3px solid #48DBDB" : "3px solid #6D6D6D",
-          borderRadius: "100%",
-          cursor: "ns-resize",
+          backgroundColor: '#fff',
+          border: hasEditorFocus ? '3px solid #48DBDB' : '3px solid #6D6D6D',
+          borderRadius: '100%',
+          cursor: 'ns-resize',
           height: 24,
           width: 24,
-          zIndex: 3
+          zIndex: 3,
         }}
       />
     );
   }
 
   CircleHandle.propTypes = {
-    style: PropTypes.object
+    style: PropTypes.object,
   };
   CircleHandle.defaultProps = {
-    style: null
+    style: null,
   };
 
   return CircleHandle;

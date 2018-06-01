@@ -1,16 +1,27 @@
 import g from 'glamorous';
 import React, { Component, Fragment } from 'react';
+import Loadable from 'react-loadable';
 import { Subscribe } from 'unstated';
 import AwesomeEditor from './components/AwesomeEditor';
 import ColorPicker from './components/ColorPicker';
 import ColorPickerSwitch from './components/ColorPickerSwitch';
-import CustomiseOverlay from './components/CustomiseOverlay';
+// import CustomiseOverlay from './components/CustomiseOverlay';
 import FontSizeChanger from './components/FontSizeChanger';
+import LoadableLoading from './components/LoadableLoading';
 import Logo from './components/Logo';
 import ModalOpener from './components/ModalOpener';
 import './css/overrides.css';
 import ColorSelectContainer from './state-containers/ColorSelectContainer';
 import createColorPickerUtil from './utils/colorPickerUtil';
+
+const LazyCanvasOverlay = Loadable({
+  loader: () => import('./components/CustomiseOverlay'),
+  render(loaded, props) {
+    let CustomiseOverlay = loaded.default;
+    return <CustomiseOverlay {...props} />;
+  },
+  loading: LoadableLoading,
+});
 
 class PoetryEditor extends Component {
   constructor(...args) {
@@ -73,7 +84,7 @@ class PoetryEditor extends Component {
     return (
       <Fragment>
         {this.state.isModal ? (
-          <CustomiseOverlay
+          <LazyCanvasOverlay
             toggleModal={this.toggleModal}
             editorState={editorState}
             cPickerUtil={this.cPickerUtil}

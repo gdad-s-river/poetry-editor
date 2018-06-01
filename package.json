@@ -28,10 +28,11 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && rm build/static/**/*.map",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "deploy": "rm -rf build && npm run build && cd build && now --name poetry-editor && npm run removeweirdno",
+    "deploy":
+      "rm -rf build && npm run build && cd build && now --name poetry-editor && npm run removeweirdno",
     "removeweirdno": "./gscripts/nowalias.js"
   }
 }

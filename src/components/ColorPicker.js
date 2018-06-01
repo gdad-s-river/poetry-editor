@@ -15,7 +15,6 @@ class ColorPicker extends Component {
 
   handleUserChangingColor = (color, event) => {
     const { handleColorChange, colorHandle, handleEditorBgChange } = this.props;
-    console.log('color handler is — ', colorHandle);
 
     switch (colorHandle) {
       case 'fontColor':

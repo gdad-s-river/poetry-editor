@@ -1,5 +1,6 @@
 import g from 'glamorous';
 import React, { Component, Fragment } from 'react';
+import { Subscribe } from 'unstated';
 import AwesomeEditor from './components/AwesomeEditor';
 import ColorPicker from './components/ColorPicker';
 import ColorPickerSwitch from './components/ColorPickerSwitch';
@@ -8,8 +9,8 @@ import FontSizeChanger from './components/FontSizeChanger';
 import Logo from './components/Logo';
 import ModalOpener from './components/ModalOpener';
 import './css/overrides.css';
+import ColorSelectContainer from './state-containers/ColorSelectContainer';
 import createColorPickerUtil from './utils/colorPickerUtil';
-import { setLSItem } from './utils/localStorage';
 
 class PoetryEditor extends Component {
   constructor(...args) {
@@ -23,16 +24,12 @@ class PoetryEditor extends Component {
   }
 
   state = {
-    currentColor: '#000',
-    colorSwitch: 'fontColor',
-    editorBgColor: '#fff',
     currentFontSize: 16,
     isModal: false,
   };
 
   componentDidMount() {
-    let doc = document;
-    doc
+    document
       .querySelector('body')
       .addEventListener('keydown', this.closeModalOnEscape);
   }
@@ -47,29 +44,6 @@ class PoetryEditor extends Component {
     if (e.keyCode === 27 && this.state.isModal) {
       this.toggleModal();
     }
-  };
-
-  /* from editor inlinestyle color to keep in sync with colorpicker*/
-  setCurrentColor = color => {
-    this.setState({
-      currentColor: color,
-    });
-  };
-
-  handleCurrentColorChange = (color, event) => {
-    this.setState({ currentColor: color.hex });
-    this.cPickerUtil.addColor(color.hex);
-  };
-
-  handleEditorBgChange = (color, event) => {
-    this.setState({ currentColor: color.hex });
-    setLSItem('editorBgColor', color.hex);
-  };
-
-  switchColorPicker = val => {
-    this.setState({
-      colorSwitch: val,
-    });
   };
 
   toggleModal = () => {
@@ -90,30 +64,17 @@ class PoetryEditor extends Component {
   };
 
   render() {
-    const { colorSwitch, editorBgColor } = this.state;
     const {
       state: { editorFocus, editorState },
       setEditorFocus,
       setEditorState,
     } = this.props;
-    switch (colorSwitch) {
-      case 'fontColor':
-        this.handleColorChange = this.handleCurrentColorChange;
-        break;
-      case 'imgBg':
-        this.handleColorChange = this.handleEditorBgChange;
-        break;
-      default:
-        this.handleColorChange = this.handleCurrentColorChange;
-        break;
-    }
 
     return (
       <Fragment>
         {this.state.isModal ? (
           <CustomiseOverlay
             toggleModal={this.toggleModal}
-            canvasBg={editorBgColor}
             editorState={editorState}
             cPickerUtil={this.cPickerUtil}
           />
@@ -126,19 +87,30 @@ class PoetryEditor extends Component {
             <CenterKick hasEditorFocus={editorFocus}>
               <Logo />
             </CenterKick>
-            <AwesomeEditor
-              cPickerUtil={this.cPickerUtil}
-              currentColor={this.state.currentColor}
-              setCurrentColor={this.setCurrentColor}
-              editorBgColor={this.state.editorBgColor}
-              colorSwitch={this.state.colorSwitch}
-              switchColorPicker={this.switchColorPicker}
-              setCurrentFontSize={this.setCurrentFontSize}
-              hasEditorFocus={editorFocus}
-              setEditorFocus={setEditorFocus}
-              editorState={editorState}
-              setEditorState={setEditorState}
-            />
+            <Subscribe to={[ColorSelectContainer]}>
+              {({
+                state: { currentColor, colorHandle },
+                switchColorHandle,
+                setCurrentColor,
+                handleCurrentColorChange,
+                handleEditorBgColor,
+              }) => {
+                return (
+                  <AwesomeEditor
+                    cPickerUtil={this.cPickerUtil}
+                    currentColor={currentColor}
+                    setCurrentColor={setCurrentColor}
+                    colorHandle={colorHandle}
+                    switchColorHandle={switchColorHandle}
+                    setCurrentFontSize={this.setCurrentFontSize}
+                    hasEditorFocus={editorFocus}
+                    setEditorFocus={setEditorFocus}
+                    editorState={editorState}
+                    setEditorState={setEditorState}
+                  />
+                );
+              }}
+            </Subscribe>
             <CenterKick hasEditorFocus={editorFocus} />
           </SuperHero>
           <SideKicks hasEditorFocus={editorFocus}>
@@ -152,18 +124,42 @@ class PoetryEditor extends Component {
               />
             </SideKickRightWrapper>
             <SideKickRightWrapper>
-              <ColorPicker
-                color={this.state.currentColor}
-                handleColorChange={this.handleColorChange}
-              />
+              <Subscribe to={[ColorSelectContainer]}>
+                {({
+                  state: { colorHandle, currentColor },
+                  handleCurrentColorChange,
+                  handleEditorBgChange,
+                }) => {
+                  return (
+                    <ColorPicker
+                      color={currentColor}
+                      colorHandle={colorHandle}
+                      handleColorChange={() =>
+                        handleCurrentColorChange(this.cPickerUtil)
+                      }
+                      handleEditorBgChange={handleEditorBgChange}
+                    />
+                  );
+                }}
+              </Subscribe>
             </SideKickRightWrapper>
 
             <SideKickRightWrapper>
-              <ColorPickerSwitch
-                colorSwitch={colorSwitch}
-                switchColorPicker={this.switchColorPicker}
-                setCurrentColor={this.setCurrentColor}
-              />
+              <Subscribe to={[ColorSelectContainer]}>
+                {({
+                  state: { colorHandle },
+                  switchColorHandle,
+                  setCurrentColor,
+                }) => {
+                  return (
+                    <ColorPickerSwitch
+                      colorSwitch={colorHandle}
+                      switchColorHandle={switchColorHandle}
+                      setCurrentColor={setCurrentColor}
+                    />
+                  );
+                }}
+              </Subscribe>
             </SideKickRightWrapper>
           </SideKicks>
         </TopWrapper>

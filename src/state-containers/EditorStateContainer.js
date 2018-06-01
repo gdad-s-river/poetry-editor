@@ -2,7 +2,10 @@ import { Container } from 'unstated';
 import getEditorStateFromLS from '../utils/getEditorStateFromLS';
 
 class EditorFocusContainer extends Container {
-  state = { editorFocus: false, editorState: getEditorStateFromLS() };
+  state = {
+    editorFocus: false,
+    editorState: getEditorStateFromLS(),
+  };
 
   setEditorFocus = newFocusVal => {
     this.setState(prevState => {
@@ -11,8 +14,6 @@ class EditorFocusContainer extends Container {
       } else {
         return;
       }
-
-      return { editorFocus: newFocusVal };
     });
   };
 

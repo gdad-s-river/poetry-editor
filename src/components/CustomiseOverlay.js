@@ -1,15 +1,13 @@
-import React, { Component } from "react";
-import g from "glamorous";
-
-import { TopWrapper } from "../PoetryEditor";
-
-import Modal from "./Modal";
-import CloseButton from "./CloseButton";
-import TheCanvas from "./TheCanvas";
+import g from 'glamorous';
+import React, { Component } from 'react';
+import { TopWrapper } from '../PoetryEditor';
+import CloseButton from './CloseButton';
+import Modal from './Modal';
+import TheCanvas from './TheCanvas';
 
 class CustomiseOverlay extends Component {
   handleClick = e => {
-    if (e.target.tagName !== "CANVAS" && !this.isDragging) {
+    if (e.target.tagName !== 'CANVAS' && !this.isDragging) {
       this.props.toggleModal();
     }
   };
@@ -19,7 +17,7 @@ class CustomiseOverlay extends Component {
   };
 
   render() {
-    const { editorState, canvasBg, cPickerUtil } = this.props;
+    const { editorState, cPickerUtil } = this.props;
 
     return (
       <Modal>
@@ -28,7 +26,6 @@ class CustomiseOverlay extends Component {
             <CloseButton />
             <TopWrapper>
               <TheCanvas
-                canvasBg={canvasBg}
                 editorState={editorState}
                 cPickerUtil={cPickerUtil}
                 setDraggingStatusForOverlay={this.setDraggingStatusForOverlay}
@@ -44,19 +41,19 @@ class CustomiseOverlay extends Component {
 export default CustomiseOverlay;
 
 const ModalStyledWrapper = g.div({
-  backgroundColor: "rgba(0, 0, 0, 1)",
-  position: "fixed",
-  height: "100%",
-  width: "100%",
-  top: "0",
-  left: "0",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center"
+  backgroundColor: 'rgba(0, 0, 0, 1)',
+  position: 'fixed',
+  height: '100%',
+  width: '100%',
+  top: '0',
+  left: '0',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 });
 
 const ModalContentWrapper = g.div({
-  width: "100%",
-  height: "100%",
-  position: "relative"
+  width: '100%',
+  height: '100%',
+  position: 'relative',
 });

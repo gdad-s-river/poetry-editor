@@ -15,6 +15,19 @@ import { reverseString } from '../utils/stringUtils';
 const blockStylesPlugin = createBlockStylesPlugin();
 
 class AwesomeEditor extends Component {
+  static propTypes = {
+    cPickerUtil: PropTypes.object.isRequired,
+    currentColor: PropTypes.string.isRequired,
+    setCurrentColor: PropTypes.func.isRequired,
+    colorHandle: PropTypes.string.isRequired,
+    switchColorHandle: PropTypes.func.isRequired,
+    setCurrentFontSize: PropTypes.func.isRequired,
+    hasEditorFocus: PropTypes.bool.isRequired,
+    setEditorFocus: PropTypes.func.isRequired,
+    editorState: PropTypes.object.isRequired,
+    setEditorState: PropTypes.func.isRequired,
+  };
+
   componentDidUpdate() {
     const contentState = this.props.editorState.getCurrentContent();
     this.saveToLocalStorage(contentState);
@@ -36,7 +49,7 @@ class AwesomeEditor extends Component {
 
   handleFocus = (e, { getEditorState }) => {
     this.props.setEditorFocus(true);
-    this.props.switchColorPicker('fontColor');
+    this.props.switchColorHandle('fontColor');
 
     this.syncCurrentDynamicStylesWithSources(getEditorState());
   };
@@ -91,7 +104,7 @@ class AwesomeEditor extends Component {
     }
 
     /* hinge: 1*/
-    if (this.props.colorSwitch === 'fontColor') {
+    if (this.props.colorHandle === 'fontColor') {
       let filteredStyle = currentStyles.filter(val => {
         return val.startsWith(COLOR_PREFIX);
       });
@@ -116,7 +129,7 @@ class AwesomeEditor extends Component {
     const { hasEditorFocus, editorState, cPickerUtil } = this.props;
 
     let bgColor =
-      this.props.colorSwitch === 'fontColor' ? '#fff' : this.props.currentColor;
+      this.props.colorHandle === 'fontColor' ? '#fff' : this.props.currentColor;
 
     return (
       <EditorWrapper
@@ -173,5 +186,4 @@ const EditorWrapper = g.div(
 EditorWrapper.displayName = 'EditorWrapper';
 EditorWrapper.propTypes = {
   hasEditorFocus: PropTypes.bool.isRequired,
-  bgColor: PropTypes.string.isRequired,
 };

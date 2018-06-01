@@ -1,25 +1,24 @@
-import React, { PureComponent } from "react";
-import Select from "react-select";
-import PropTypes from "prop-types";
-import "react-select/dist/react-select.css";
-
-import { getLSItem } from "../utils/localStorage";
+import PropTypes from 'prop-types';
+import React, { PureComponent } from 'react';
+import Select from 'react-select';
+import 'react-select/dist/react-select.css';
+import { getLSItem } from '../utils/localStorage';
 
 const options = [
-  { value: "fontColor", label: "Font Color" },
-  { value: "imgBg", label: "Image Background" }
+  { value: 'fontColor', label: 'Font Color' },
+  { value: 'imgBg', label: 'Image Background' },
 ];
 
 class ColorPickerSwitch extends PureComponent {
   handleChange = val => {
     if (val) {
-      this.props.switchColorPicker(val.value);
+      this.props.switchColorHandle(val.value);
     }
 
-    const storedEditorBgColor = getLSItem("editorBgColor");
+    const storedEditorBgColor = getLSItem('editorBgColor');
 
     this.props.setCurrentColor(
-      storedEditorBgColor ? storedEditorBgColor : "#fff"
+      storedEditorBgColor ? storedEditorBgColor : '#fff',
     );
   };
 
@@ -36,7 +35,7 @@ class ColorPickerSwitch extends PureComponent {
 }
 
 ColorPickerSwitch.propTypes = {
-  switchColorPicker: PropTypes.func.isRequired
+  switchColorHandle: PropTypes.func.isRequired,
 };
 
 export default ColorPickerSwitch;

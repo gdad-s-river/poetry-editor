@@ -1,7 +1,6 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 // import { stateToHTML } from "draft-js-export-html";
-
-import { getLSItem, setLSItem } from "../utils/localStorage";
+import { getLSItem, setLSItem } from '../utils/localStorage';
 
 /**
  * had not been able to extract css string from glamor/reset using
@@ -12,13 +11,13 @@ import { getLSItem, setLSItem } from "../utils/localStorage";
 
 class MyCanvas extends Component {
   state = {
-    isDragging: false
+    isDragging: false,
   };
 
   constructor(props) {
     super(props);
     this.dragHeight =
-      document.querySelector("div[data-contents]").getBoundingClientRect()
+      document.querySelector('div[data-contents]').getBoundingClientRect()
         .height / 2;
 
     /**
@@ -127,7 +126,7 @@ class MyCanvas extends Component {
   }
 
   getPixelRatio() {
-    let ctx = this.canvas.getContext("2d"),
+    let ctx = this.canvas.getContext('2d'),
       dpr = window.devicePixelRatio || 1,
       bsr =
         ctx.webkitBackingStorePixelRatio ||
@@ -146,17 +145,17 @@ class MyCanvas extends Component {
     let c = this.canvas;
     c.width = w * ratio;
     c.height = h * ratio;
-    c.style.width = w + "px";
-    c.style.height = h + "px";
-    c.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
-    c.ctx = c.getContext("2d");
+    c.style.width = w + 'px';
+    c.style.height = h + 'px';
+    c.getContext('2d').setTransform(ratio, 0, 0, ratio, 0, 0);
+    c.ctx = c.getContext('2d');
     return c;
   };
 
   getImprintData(html) {
-    var doc = document.implementation.createHTMLDocument("");
+    var doc = document.implementation.createHTMLDocument('');
     doc.documentElement.innerHTML = html;
-    doc.documentElement.setAttribute("xmlns", doc.documentElement.namespaceURI);
+    doc.documentElement.setAttribute('xmlns', doc.documentElement.namespaceURI);
 
     // Get well-formed xthml markup for svg
     let xhtml = new XMLSerializer().serializeToString(doc.documentElement);
@@ -177,7 +176,7 @@ class MyCanvas extends Component {
           }
         </style>
         <foreignObject width="100%" height="100%">
-          ${xhtml || ""}
+          ${xhtml || ''}
         </foreignObject>
       </svg>
     `;
@@ -202,7 +201,7 @@ class MyCanvas extends Component {
 
     const { width, height } = myC;
 
-    this.myC.ctx.fillStyle = getLSItem("editorBgColor") || "#fff";
+    this.myC.ctx.fillStyle = getLSItem('editorBgColor') || '#fff';
 
     /**
      * canvas clearing up method
@@ -218,7 +217,7 @@ class MyCanvas extends Component {
     let img = new Image(WIDTH, HEIGHT);
     this.img = img;
 
-    let svg = new Blob([canvasImprintData], { type: "image/svg+xml" });
+    let svg = new Blob([canvasImprintData], { type: 'image/svg+xml' });
     let url = DOMURL.createObjectURL(svg);
 
     img.onload = () => {
@@ -235,7 +234,7 @@ class MyCanvas extends Component {
     // const inlineStyles = cPickerUtil.exporter(editorState);
     // const html = stateToHTML(contentState, { inlineStyles });
 
-    const html = document.querySelector(".DraftEditor-root").innerHTML;
+    const html = document.querySelector('.DraftEditor-root').innerHTML;
     return html;
   }
 
@@ -268,13 +267,13 @@ class MyCanvas extends Component {
     this.imgY = e.clientY - offsetY;
 
     setLSItem(
-      "textDragPos",
-      JSON.stringify({ imgX: this.imgX, imgY: this.imgY })
+      'textDragPos',
+      JSON.stringify({ imgX: this.imgX, imgY: this.imgY }),
     );
   }
 
   drawImg() {
-    let storedTextPos = JSON.parse(getLSItem("textDragPos"));
+    let storedTextPos = JSON.parse(getLSItem('textDragPos'));
 
     const { width, height } = this.myC;
     this.myC.ctx.fillRect(0, 0, width, height);
@@ -283,7 +282,7 @@ class MyCanvas extends Component {
       this.imgX || (storedTextPos ? storedTextPos.imgX : 10),
       this.imgY || (storedTextPos ? storedTextPos.imgY : 10),
       this.WIDTH,
-      this.HEIGHT
+      this.HEIGHT,
     );
 
     if (this.state.isDragging) {
@@ -334,5 +333,5 @@ export default MyCanvas;
 // });
 
 const canvasStyles = {
-  cursor: "pointer"
+  cursor: 'pointer',
 };

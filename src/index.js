@@ -9,6 +9,8 @@ import registerServiceWorker from './registerServiceWorker';
 
 UNSTATED.logStateChanges = process.env.NODE_ENV === 'development';
 
+// UNSTATED.logStateChanges = false;
+
 ReactDOM.render(
   <Provider>
     <UseDesktop />

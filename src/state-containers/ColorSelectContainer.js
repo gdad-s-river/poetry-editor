@@ -1,10 +1,9 @@
 import { Container } from 'unstated';
-import { setLSItem } from '../utils/localStorage';
 
 class ColorSelectContainer extends Container {
   state = {
-    currentColor: '#000',
-    colorHandle: 'fontColor', // 'fontColor', 'imgBg'
+    currentColor: '#000000',
+    colorHandle: 'imgBg', // 'fontColor', 'imgBg'
   };
 
   // val = 'fontColor' || 'imgBg'
@@ -15,19 +14,18 @@ class ColorSelectContainer extends Container {
   };
 
   setCurrentColor = color => {
+    if (!color) {
+      throw new Error('You need to pass in some color');
+    }
+
     this.setState({
       currentColor: color,
     });
   };
 
-  handleCurrentColorChange = cPickerUtil => color => {
+  handleCurrentColorChange = customStylesUtils => color => {
     this.setCurrentColor(color.hex);
-    cPickerUtil.addColor(color.hex);
-  };
-
-  handleEditorBgChange = color => {
-    this.setCurrentColor(color.hex);
-    setLSItem('editorBgColor', color.hex);
+    customStylesUtils.addColor(color.hex);
   };
 }
 

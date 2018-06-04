@@ -72,7 +72,7 @@ class MyEditor extends React.Component {
     super(props);
     this.state = {
       editorState: EditorState.createEmpty(),
-      canvasBg: "#fff",
+      canvasBg: "#ffffff",
       isDragging: false,
       styleMap: {}
     };

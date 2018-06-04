@@ -1,10 +1,10 @@
-import createStyles from "draft-js-custom-styles";
+import createStyles from 'draft-js-custom-styles';
 
-const DYNAMIC_STYLES_PREFIX = "CUSTOM_";
+const DYNAMIC_STYLES_PREFIX = 'CUSTOM_';
 
 const { styles, customStyleFn, exporter } = createStyles(
-  ["color", "font-size"],
-  DYNAMIC_STYLES_PREFIX
+  ['color', 'font-size'],
+  DYNAMIC_STYLES_PREFIX,
 );
 
 const addColor = (updateEditorState, getEditorState) => color => {
@@ -32,7 +32,7 @@ const colorPickerUtil = (updateEditorState, getEditorState) => ({
   addFontSize: addFontSize(updateEditorState, getEditorState),
   currentFontSize: currentFontSize(getEditorState),
   customStyleFn,
-  exporter
+  exporter,
 });
 
 export default colorPickerUtil;

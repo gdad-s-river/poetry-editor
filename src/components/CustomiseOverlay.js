@@ -1,4 +1,5 @@
 import g from 'glamorous';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { TopWrapper } from '../PoetryEditor';
 import CloseButton from './CloseButton';
@@ -6,6 +7,12 @@ import Modal from './Modal';
 import TheCanvas from './TheCanvas';
 
 class CustomiseOverlay extends Component {
+  static propTypes = {
+    toggleModal: PropTypes.func.isRequired,
+		editorState: PropTypes.object.isRequired,
+		editorBackground: PropTypes.string.isRequired
+  };
+
   handleClick = e => {
     if (e.target.tagName !== 'CANVAS' && !this.isDragging) {
       this.props.toggleModal();
@@ -17,7 +24,10 @@ class CustomiseOverlay extends Component {
   };
 
   render() {
-    const { editorState, cPickerUtil } = this.props;
+    const {
+      editorState,
+      editorBackground /* customStylesUtils */,
+    } = this.props;
 
     return (
       <Modal>
@@ -27,7 +37,8 @@ class CustomiseOverlay extends Component {
             <TopWrapper>
               <TheCanvas
                 editorState={editorState}
-                cPickerUtil={cPickerUtil}
+                editorBackground={editorBackground}
+                // customStylesUtils={customStylesUtils}
                 setDraggingStatusForOverlay={this.setDraggingStatusForOverlay}
               />
             </TopWrapper>

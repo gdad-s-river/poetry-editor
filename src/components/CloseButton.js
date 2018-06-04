@@ -22,7 +22,7 @@ function CloseButton({ toggleModal }) {
             width: "35px",
             height: "35px",
             strokeWidth: 30,
-            strokeColor: "#fff"
+            strokeColor: "#ffffff"
           })
         }}
       />

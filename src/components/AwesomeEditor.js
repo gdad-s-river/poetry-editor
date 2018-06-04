@@ -7,7 +7,7 @@ import debounce from 'lodash.debounce';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import createBlockStylesPlugin from '../plugins/blockStyles';
-import { DYNAMIC_STYLES_PREFIX } from '../utils/colorPickerUtil';
+import { DYNAMIC_STYLES_PREFIX } from '../utils/customStylesUtils';
 import { getLSItem } from '../utils/localStorage';
 import { isEmptyObject } from '../utils/objectUtils';
 import { reverseString } from '../utils/stringUtils';
@@ -16,7 +16,7 @@ const blockStylesPlugin = createBlockStylesPlugin();
 
 class AwesomeEditor extends Component {
   static propTypes = {
-    cPickerUtil: PropTypes.object.isRequired,
+    customStylesUtils: PropTypes.object.isRequired,
     currentColor: PropTypes.string.isRequired,
     setCurrentColor: PropTypes.func.isRequired,
     colorHandle: PropTypes.string.isRequired,
@@ -26,7 +26,20 @@ class AwesomeEditor extends Component {
     setEditorFocus: PropTypes.func.isRequired,
     editorState: PropTypes.object.isRequired,
     setEditorState: PropTypes.func.isRequired,
+    setEditorBackground: PropTypes.func.isRequired,
   };
+
+  componentDidMount() {
+    /* restore already saved editorBackground color if any */
+
+    const storedEditorBgColor = getLSItem('editorBackground');
+
+    let initColor = storedEditorBgColor ? storedEditorBgColor : '#ffffff';
+
+    this.props.setCurrentColor(initColor);
+
+    this.props.setEditorBackground(initColor);
+  }
 
   componentDidUpdate() {
     const contentState = this.props.editorState.getCurrentContent();
@@ -56,11 +69,12 @@ class AwesomeEditor extends Component {
 
   handleBlur = () => {
     this.props.setEditorFocus(false);
+    this.props.switchColorHandle('imgBg');
   };
 
   syncCurrentDynamicStylesWithSources(editorState) {
     const currentStyles = editorState.getCurrentInlineStyle();
-    const BLACK = '#000';
+    const BLACK = '#000000';
 
     if (!currentStyles.size) {
       this.props.setCurrentColor(BLACK);
@@ -118,25 +132,25 @@ class AwesomeEditor extends Component {
         );
         this.props.setCurrentColor(currentSelectionStyle);
       } else {
-        this.props.setCurrentColor(BLACK);
+        // this.props.setCurrentColor(BLACK);
       }
-    } else {
-      this.props.setCurrentColor(this.bgColor);
     }
   }
 
   render() {
-    const { hasEditorFocus, editorState, cPickerUtil } = this.props;
-
-    let bgColor =
-      this.props.colorHandle === 'fontColor' ? '#fff' : this.props.currentColor;
+    const {
+      hasEditorFocus,
+      editorState,
+      customStylesUtils,
+      editorBackground,
+    } = this.props;
 
     return (
       <EditorWrapper
         className="editor-wrapper"
         onClick={this.focus}
         hasEditorFocus={hasEditorFocus}
-        bgColor={bgColor}
+        editorBackground={editorBackground}
       >
         <Editor
           editorState={editorState}
@@ -146,7 +160,7 @@ class AwesomeEditor extends Component {
           onBlur={this.handleBlur}
           placeholder={`Writecha Poem Here!`}
           stripPastedStyles={true}
-          customStyleFn={cPickerUtil.customStyleFn}
+          customStyleFn={customStylesUtils.customStyleFn}
           plugins={[blockStylesPlugin]}
         />
       </EditorWrapper>
@@ -170,15 +184,10 @@ const EditorWrapper = g.div(
     transition: 'box-shadow 0.4s, border 0.4s',
     border: '2px solid #d4d4d4',
   },
-  ({ hasEditorFocus, bgColor }) => {
-    const storedEditorBgColor = getLSItem('editorBgColor');
+  ({ hasEditorFocus, editorBackground }) => {
     return {
-      boxShadow: hasEditorFocus ? '0px 0px 25px 0px #000' : 'none',
-      background: storedEditorBgColor
-        ? storedEditorBgColor
-        : bgColor
-          ? bgColor
-          : '#fff',
+      boxShadow: hasEditorFocus ? '0px 0px 25px 0px #000000' : 'none',
+      background: editorBackground,
     };
   },
 );

@@ -1,8 +1,15 @@
+import find from 'lodash/find';
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import Select from 'react-select';
-import 'react-select/dist/react-select.css';
-import { getLSItem } from '../utils/localStorage';
+// import { getLSItem } from '../utils/localStorage';
+
+const customStyles = {
+  control: base => ({
+    ...base,
+    width: 200,
+  }),
+};
 
 const options = [
   { value: 'fontColor', label: 'Font Color' },
@@ -10,25 +17,52 @@ const options = [
 ];
 
 class ColorPickerSwitch extends PureComponent {
+  state = {
+    selectedOption: find(options, ['value', this.props.colorHandle]),
+  };
+
+  static getDerivedStateFromProps(props, prevState) {
+    // if (
+    //   prevState.selectedOption &&
+    //   props.colorHandle !== prevState.selectedOption.value
+    // ) {
+    //   console.log(find(options, ['value', props.colorHandle]));
+    //   return { selectedOption: find(options, ['value', props.colorHandle]) };
+    // }
+
+    /**
+     * We need to do this without checking the above commented code
+     * because we need to accout for when the user doesn't really change
+     * the select option manually, but instead selects the already selected one
+     */
+    return { selectedOption: find(options, ['value', props.colorHandle]) };
+
+    // return prevState;
+  }
+
   handleChange = val => {
     if (val) {
       this.props.switchColorHandle(val.value);
+      this.setState({ selectedOption: find(options, ['value', val]) });
     }
-
-    const storedEditorBgColor = getLSItem('editorBgColor');
-
-    this.props.setCurrentColor(
-      storedEditorBgColor ? storedEditorBgColor : '#fff',
-    );
   };
 
+  handleMenuClose() {
+    // this.setState(selectedOption: this.state.selectedOption);
+  }
+
   render() {
+    const { selectedOption } = this.state;
+
     return (
       <Select
         name="switch-color-picker"
-        value={this.props.colorSwitch}
+        defaultValue={options[0]}
         options={options}
         onChange={this.handleChange}
+        styles={customStyles}
+        value={selectedOption}
+        onMenuClose={this.handleMenuClose}
       />
     );
   }

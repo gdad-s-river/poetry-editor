@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 // import { stateToHTML } from "draft-js-export-html";
 import { getLSItem, setLSItem } from '../utils/localStorage';
@@ -12,6 +13,12 @@ import { getLSItem, setLSItem } from '../utils/localStorage';
 class MyCanvas extends Component {
   state = {
     isDragging: false,
+  };
+
+  static propTypes = {
+    editorBackground: PropTypes.string.isRequired,
+    setDraggingStatusForOverlay: PropTypes.func.isRequired,
+    editorState: PropTypes.object.isRequired,
   };
 
   constructor(props) {
@@ -201,7 +208,7 @@ class MyCanvas extends Component {
 
     const { width, height } = myC;
 
-    this.myC.ctx.fillStyle = getLSItem('editorBgColor') || '#fff';
+    this.myC.ctx.fillStyle = this.props.editorBackground || '#ffffff';
 
     /**
      * canvas clearing up method
@@ -229,9 +236,9 @@ class MyCanvas extends Component {
   }
 
   createMarkup() {
-    // const { editorState, cPickerUtil } = this.props;
+    // const { editorState, customStylesUtils } = this.props;
     // const contentState = editorState.getCurrentContent();
-    // const inlineStyles = cPickerUtil.exporter(editorState);
+    // const inlineStyles = customStylesUtils.exporter(editorState);
     // const html = stateToHTML(contentState, { inlineStyles });
 
     const html = document.querySelector('.DraftEditor-root').innerHTML;

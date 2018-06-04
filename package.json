@@ -9,6 +9,7 @@
     "draft-js-plugins-editor": "^2.0.8",
     "glamor": "^2.20.40",
     "glamorous": "^4.13.0",
+    "lodash": "^4.17.10",
     "lodash.camelcase": "^4.3.0",
     "lodash.debounce": "^4.0.8",
     "react": "^16.4.0",
@@ -17,7 +18,7 @@
     "react-loadable": "^5.4.0",
     "react-media": "^1.8.0",
     "react-scripts": "1.1.4",
-    "react-select": "^1.2.1",
+    "react-select": "^2.0.0-beta.6",
     "rheostat": "^2.2.0",
     "unstated": "^2.1.1",
     "unstated-debug": "^0.2.0"

@@ -6,6 +6,9 @@ import Slider from './Slider';
 class FontSizeChanger extends PureComponent {
   static propTypes = {
     hasEditorFocus: PropTypes.bool.isRequired,
+    currentFontSize: PropTypes.number.isRequired,
+    addFontSize: PropTypes.func.isRequired,
+    setCurrentFontSize: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -32,6 +35,7 @@ class FontSizeChanger extends PureComponent {
 
   render() {
     const { hasEditorFocus, currentFontSize } = this.props;
+
     return (
       <FontSizeChangerWrapper>
         <Slider
@@ -61,7 +65,7 @@ const FontSizeDisplay = g.span(
     transition: 'color 0.4s',
   },
   ({ hasEditorFocus }) => ({
-    color: hasEditorFocus ? '#fff' : '#000',
+    color: hasEditorFocus ? '#ffffff' : '#000000',
   }),
 );
 
@@ -76,7 +80,7 @@ function MyHandleMaker(hasEditorFocus) {
         {...passProps}
         style={{
           ...style,
-          backgroundColor: '#fff',
+          backgroundColor: '#ffffff',
           border: hasEditorFocus ? '3px solid #48DBDB' : '3px solid #6D6D6D',
           borderRadius: '100%',
           cursor: 'ns-resize',

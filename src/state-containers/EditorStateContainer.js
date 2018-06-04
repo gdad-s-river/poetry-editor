@@ -1,10 +1,12 @@
 import { Container } from 'unstated';
 import getEditorStateFromLS from '../utils/getEditorStateFromLS';
+import { setLSItem } from '../utils/localStorage';
 
 class EditorFocusContainer extends Container {
   state = {
     editorFocus: false,
     editorState: getEditorStateFromLS(),
+    editorBackground: '#ffffff',
   };
 
   setEditorFocus = newFocusVal => {
@@ -23,6 +25,24 @@ class EditorFocusContainer extends Container {
 
   setEditorState = editorState => {
     this.setState({ editorState });
+  };
+
+  setEditorBackground = background => {
+    if (!background) {
+      throw new Error('need to give some background');
+    }
+
+    let hexColorRegex = /^#[0-9A-F]{6}$/i;
+    let isHexColor = hexColorRegex.test(background);
+
+    // background is not an image
+    if (isHexColor) {
+      this.setState({
+        editorBackground: background,
+      });
+
+      setLSItem('editorBackground', background);
+    }
   };
 }
 

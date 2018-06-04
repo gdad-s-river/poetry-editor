@@ -3,10 +3,11 @@ import createStyles from 'draft-js-custom-styles';
 const DYNAMIC_STYLES_PREFIX = 'CUSTOM_';
 
 const { styles, customStyleFn, exporter } = createStyles(
-  ['color', 'font-size'],
+  ['color', 'font-size', 'font-family'],
   DYNAMIC_STYLES_PREFIX,
 );
 
+// TODO: convert all of this in a wrapping function to avoid repetition
 const addColor = (updateEditorState, getEditorState) => color => {
   return updateEditorState(styles.color.add(getEditorState(), color));
 };
@@ -25,12 +26,17 @@ const addFontSize = (updateEditorState, getEditorState) => fontSize => {
 const currentFontSize = getEditorState => () =>
   styles.fontSize.current(getEditorState());
 
+const addFontFamily = (updateEditorState, getEditorState) => fontFamily => {
+  return updateEditorState(styles.fontFamily.add(getEditorState(), fontFamily));
+};
+
 const colorPickerUtil = (updateEditorState, getEditorState) => ({
   addColor: addColor(updateEditorState, getEditorState),
   removeColor: removeColor(updateEditorState, getEditorState),
-  currentColor: currentColor(getEditorState),
+  // currentColor: currentColor(getEditorState), // TODO: is not being used anywhere (check and remove)
   addFontSize: addFontSize(updateEditorState, getEditorState),
-  currentFontSize: currentFontSize(getEditorState),
+  addFontFamily: addFontFamily(updateEditorState, getEditorState),
+  // currentFontSize: currentFontSize(getEditorState), // TODO: is not being used anywhere (check and remove)
   customStyleFn,
   exporter,
 });

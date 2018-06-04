@@ -4,6 +4,7 @@ import Loadable from 'react-loadable';
 import AwesomeEditor from './components/AwesomeEditor';
 import ColorPicker from './components/ColorPicker';
 import ColorPickerSwitch from './components/ColorPickerSwitch';
+import FontSelector from './components/FontSelector';
 // import CustomiseOverlay from './components/CustomiseOverlay';
 import FontSizeChanger from './components/FontSizeChanger';
 import LoadableLoading from './components/LoadableLoading';
@@ -34,6 +35,7 @@ class PoetryEditor extends Component {
 
   state = {
     currentFontSize: 16,
+    currentFontFamily: 'Arial',
     isModal: false,
   };
 
@@ -65,6 +67,14 @@ class PoetryEditor extends Component {
     this.setState({ currentFontSize: fontSize });
     this.customStylesUtils.addFontSize(fontSize);
   }
+
+  setCurrentFontFamily = fontFamily => {
+    this.setState({
+      currentFontFamily: fontFamily,
+    });
+
+    // this.customStylesUtils.addFontFamily(fontFamily);
+  };
 
   setCurrentFontSize = fontSize => {
     if (!fontSize) {
@@ -106,6 +116,11 @@ class PoetryEditor extends Component {
         <TopWrapper>
           <SideKicks hasEditorFocus={editorFocus}>
             <ModalOpener toggleModal={this.toggleModal} />
+            <FontSelector
+              currentFontFamily={this.state.currentFontFamily}
+              setCurrentFontFamily={this.setCurrentFontFamily}
+              addFontFamily={this.customStylesUtils.addFontFamily}
+            />
           </SideKicks>
           <SuperHero>
             <CenterKick hasEditorFocus={editorFocus}>
@@ -124,6 +139,8 @@ class PoetryEditor extends Component {
               setEditorState={setEditorState}
               editorBackground={editorBackground}
               setEditorBackground={setEditorBackground}
+              setCurrentFontFamily={this.setCurrentFontFamily}
+              currentFontFamily={this.state.currentFontFamily}
             />
             <CenterKick hasEditorFocus={editorFocus} />
           </SuperHero>

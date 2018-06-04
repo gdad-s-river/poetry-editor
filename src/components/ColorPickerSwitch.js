@@ -8,12 +8,13 @@ const customStyles = {
   control: base => ({
     ...base,
     width: 200,
+    // TODO: see how to disable cursor style
   }),
 };
 
 const options = [
   { value: 'fontColor', label: 'Font Color' },
-  { value: 'imgBg', label: 'Image Background' },
+  { value: 'imgBg', label: 'Background Color' },
 ];
 
 class ColorPickerSwitch extends PureComponent {
@@ -63,6 +64,7 @@ class ColorPickerSwitch extends PureComponent {
         styles={customStyles}
         value={selectedOption}
         onMenuClose={this.handleMenuClose}
+        searchable={false}
       />
     );
   }

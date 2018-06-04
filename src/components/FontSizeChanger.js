@@ -23,6 +23,7 @@ class FontSizeChanger extends PureComponent {
 
   updateFontSize = sliderState => {
     const { setCurrentFontSize, addFontSize } = this.props;
+
     const fontSize = sliderState.values[0];
     setCurrentFontSize(fontSize);
     this.strPixieFontSize = `${fontSize}px`;

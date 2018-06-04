@@ -10,8 +10,6 @@
     "glamor": "^2.20.40",
     "glamorous": "^4.13.0",
     "lodash": "^4.17.10",
-    "lodash.camelcase": "^4.3.0",
-    "lodash.debounce": "^4.0.8",
     "react": "^16.4.0",
     "react-color": "^2.14.1",
     "react-dom": "^16.4.0",
@@ -33,7 +31,8 @@
     "build": "react-scripts build && rm build/static/**/*.map",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "deploy": "rm -rf build && npm run build && cd build && now --name poetry-editor && npm run removeweirdno",
+    "deploy":
+      "rm -rf build && npm run build && cd build && now --name poetry-editor && npm run removeweirdno",
     "removeweirdno": "./gscripts/nowalias.js"
   }
 }

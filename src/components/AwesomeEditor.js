@@ -2,14 +2,15 @@ import { convertToRaw } from 'draft-js';
 import Editor from 'draft-js-plugins-editor';
 import 'draft-js/dist/Draft.css';
 import g from 'glamorous';
-import camelCase from 'lodash.camelcase';
-import debounce from 'lodash.debounce';
+import camelCase from 'lodash/camelCase';
+import debounce from 'lodash/debounce';
+import has from 'lodash/has';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import '../css/Draftjs-custom.css';
 import createBlockStylesPlugin from '../plugins/blockStyles';
 import { DYNAMIC_STYLES_PREFIX } from '../utils/customStylesUtils';
 import { getLSItem } from '../utils/localStorage';
-import { isEmptyObject } from '../utils/objectUtils';
 import { reverseString } from '../utils/stringUtils';
 
 const blockStylesPlugin = createBlockStylesPlugin();
@@ -27,11 +28,11 @@ class AwesomeEditor extends Component {
     editorState: PropTypes.object.isRequired,
     setEditorState: PropTypes.func.isRequired,
     setEditorBackground: PropTypes.func.isRequired,
+    setCurrentFontFamily: PropTypes.func.isRequired,
   };
 
   componentDidMount() {
     /* restore already saved editorBackground color if any */
-
     const storedEditorBgColor = getLSItem('editorBackground');
 
     let initColor = storedEditorBgColor ? storedEditorBgColor : '#ffffff';
@@ -83,11 +84,6 @@ class AwesomeEditor extends Component {
     const COLOR_PREFIX = DYNAMIC_STYLES_PREFIX + 'COLOR_';
     const regex = /_(.+)/;
 
-    /*
-      All this map, split, filter, map, reverse exercise so that I could I could use DRY
-      still haven't used this effort because I'm still manually setting at hinge = 1
-      TODO
-    */
     const dynamicStyles = currentStyles
       .filter(val => val.startsWith(DYNAMIC_STYLES_PREFIX))
       .map(val => {
@@ -105,35 +101,25 @@ class AwesomeEditor extends Component {
         return acc;
       }, {});
 
-    if (!isEmptyObject(dynamicStyles)) {
-      Object.keys(dynamicStyles).forEach(val => {
-        if (val === 'fontSize') {
-          this.props.setCurrentFontSize(
-            parseInt(dynamicStyles[val].replace('px', ''), 10),
-          );
-        }
-      });
+    if (has(dynamicStyles, 'fontSize')) {
+      console.log('yeah');
+      this.props.setCurrentFontSize(
+        parseInt(dynamicStyles['fontSize'].replace('px', ''), 10),
+      );
     } else {
       this.props.setCurrentFontSize(16);
     }
 
-    /* hinge: 1*/
-    if (this.props.colorHandle === 'fontColor') {
-      let filteredStyle = currentStyles.filter(val => {
-        return val.startsWith(COLOR_PREFIX);
-      });
+    if (has(dynamicStyles, 'fontFamily')) {
+      this.props.setCurrentFontFamily(dynamicStyles['fontFamily']);
+    } else {
+      this.props.setCurrentFontFamily('Arial'); // this will only hold true if default font of editor is set to 'arial'
+      // hackish way (DONE RIGHT NOW) — put default font from css ('Arial' word repeated across technologies (css, js))
+      // TODO: right way — haven't found it yet
+    }
 
-      const firstNOnlyPrefixedStyle = filteredStyle.first();
-
-      if (firstNOnlyPrefixedStyle) {
-        let currentSelectionStyle = firstNOnlyPrefixedStyle.replace(
-          COLOR_PREFIX,
-          '',
-        );
-        this.props.setCurrentColor(currentSelectionStyle);
-      } else {
-        // this.props.setCurrentColor(BLACK);
-      }
+    if (has(dynamicStyles, 'color')) {
+      this.props.setCurrentColor(dynamicStyles['color']);
     }
   }
 

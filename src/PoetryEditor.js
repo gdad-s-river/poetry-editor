@@ -22,6 +22,8 @@ const LazyCanvasOverlay = Loadable({
   loading: LoadableLoading,
 });
 
+// TODO: put proptypes for PoetryEditor when everything is done
+
 class PoetryEditor extends Component {
   constructor(...args) {
     super(...args);
@@ -94,6 +96,7 @@ class PoetryEditor extends Component {
         editorBackground,
         colorHandle,
         currentColor,
+        editorRef,
       },
       setEditorFocus,
       setEditorState,
@@ -101,6 +104,7 @@ class PoetryEditor extends Component {
       setCurrentColor,
       handleCurrentColorChange,
       setEditorBackground,
+      setEditorRef,
     } = this.props;
 
     return (
@@ -120,6 +124,7 @@ class PoetryEditor extends Component {
               currentFontFamily={this.state.currentFontFamily}
               setCurrentFontFamily={this.setCurrentFontFamily}
               addFontFamily={this.customStylesUtils.addFontFamily}
+              editorRef={editorRef}
             />
           </SideKicks>
           <SuperHero>
@@ -141,6 +146,8 @@ class PoetryEditor extends Component {
               setEditorBackground={setEditorBackground}
               setCurrentFontFamily={this.setCurrentFontFamily}
               currentFontFamily={this.state.currentFontFamily}
+              setEditorRef={setEditorRef}
+              editorRef={editorRef}
             />
             <CenterKick hasEditorFocus={editorFocus} />
           </SuperHero>

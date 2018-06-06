@@ -59,7 +59,7 @@ class AwesomeEditor extends Component {
     this.syncCurrentDynamicStylesWithSources(editorState);
   };
 
-  focus = () => this.editor.focus();
+  focus = () => this.props.editorRef.focus();
 
   handleFocus = (e, { getEditorState }) => {
     this.props.setEditorFocus(true);
@@ -81,7 +81,8 @@ class AwesomeEditor extends Component {
       this.props.setCurrentColor(BLACK);
     }
 
-    const COLOR_PREFIX = DYNAMIC_STYLES_PREFIX + 'COLOR_';
+    // TODO: Remove if not needed
+    // const COLOR_PREFIX = DYNAMIC_STYLES_PREFIX + 'COLOR_';
     const regex = /_(.+)/;
 
     const dynamicStyles = currentStyles
@@ -102,7 +103,6 @@ class AwesomeEditor extends Component {
       }, {});
 
     if (has(dynamicStyles, 'fontSize')) {
-      console.log('yeah');
       this.props.setCurrentFontSize(
         parseInt(dynamicStyles['fontSize'].replace('px', ''), 10),
       );
@@ -115,7 +115,7 @@ class AwesomeEditor extends Component {
     } else {
       this.props.setCurrentFontFamily('Arial'); // this will only hold true if default font of editor is set to 'arial'
       // hackish way (DONE RIGHT NOW) — put default font from css ('Arial' word repeated across technologies (css, js))
-      // TODO: right way — haven't found it yet
+      // TODO: right way — haven't found it yet; try again with customStylesUtils
     }
 
     if (has(dynamicStyles, 'color')) {
@@ -129,6 +129,7 @@ class AwesomeEditor extends Component {
       editorState,
       customStylesUtils,
       editorBackground,
+      setEditorRef,
     } = this.props;
 
     return (
@@ -141,7 +142,7 @@ class AwesomeEditor extends Component {
         <Editor
           editorState={editorState}
           onChange={this.onChange}
-          ref={ref => (this.editor = ref)}
+          ref={setEditorRef}
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
           placeholder={`Writecha Poem Here!`}

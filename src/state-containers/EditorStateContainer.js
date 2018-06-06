@@ -7,6 +7,7 @@ class EditorFocusContainer extends Container {
     editorFocus: false,
     editorState: getEditorStateFromLS(),
     editorBackground: '#ffffff',
+    editorRef: null,
   };
 
   setEditorFocus = newFocusVal => {
@@ -43,6 +44,10 @@ class EditorFocusContainer extends Container {
 
       setLSItem('editorBackground', background);
     }
+  };
+
+  setEditorRef = ref => {
+    this.setState({ editorRef: ref });
   };
 }
 

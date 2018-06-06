@@ -16,15 +16,15 @@ const removeColor = (updateEditorState, getEditorState) => () => {
   return updateEditorState(styles.color.remove(getEditorState()));
 };
 
-const currentColor = getEditorState => () =>
-  styles.color.current(getEditorState());
+// const currentColor = getEditorState => () =>
+//   styles.color.current(getEditorState());
 
 const addFontSize = (updateEditorState, getEditorState) => fontSize => {
   return updateEditorState(styles.fontSize.add(getEditorState(), fontSize));
 };
 
-const currentFontSize = getEditorState => () =>
-  styles.fontSize.current(getEditorState());
+// const currentFontSize = getEditorState => () =>
+//   styles.fontSize.current(getEditorState());
 
 const addFontFamily = (updateEditorState, getEditorState) => fontFamily => {
   return updateEditorState(styles.fontFamily.add(getEditorState(), fontFamily));

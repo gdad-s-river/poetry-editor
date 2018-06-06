@@ -7,9 +7,9 @@ import UseDesktop from './UseDesktop';
 import './css/index.css';
 import registerServiceWorker from './registerServiceWorker';
 
-UNSTATED.logStateChanges = process.env.NODE_ENV === 'development';
+// UNSTATED.logStateChanges = process.env.NODE_ENV === 'development';
 
-// UNSTATED.logStateChanges = false;
+UNSTATED.logStateChanges = false;
 
 ReactDOM.render(
   <Provider>
